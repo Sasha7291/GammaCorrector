@@ -1,0 +1,9 @@
+[submodule "lib/Csv"]
+	path = lib/Csv
+	url = https://github.com/Sasha7291/Csv.git
+[submodule "lib/Matrix"]
+	path = lib/Matrix
+	url = https://github.com/Sasha7291/Matrix.git
+[submodule "lib/LeastSquaresApproximation"]
+	path = lib/LeastSquaresApproximation
+	url = https://github.com/Sasha7291/LeastSquaresApproximation.git
