@@ -17,18 +17,29 @@ MainWindow_Ui::MainWindow_Ui(MainWindow *parent) noexcept
     , exponentionalModeCheckBox(new QCheckBox("Exponent", parent))
 {
     auto *widget = new QWidget(parent);
-    auto *layout = new QGridLayout(widget);
-    tableWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    auto *layout = new QHBoxLayout(widget);
 
-    layout->addWidget(tableWidget, 0, 0, 5, 2, Qt::AlignCenter);
-    layout->addWidget(lineModeCheckBox, 0, 2, 1, 2, Qt::AlignLeft);
-    layout->addWidget(polynomialModeCheckBox, 1, 2, 1, 2, Qt::AlignLeft);
-    layout->addWidget(exponentionalModeCheckBox, 2, 2, 1, 2, Qt::AlignLeft);
-    layout->addWidget(new QLabel("Order: "), 3, 2, Qt::AlignLeft);
-    layout->addWidget(polynomialOrderComboBox, 3, 3, Qt::AlignLeft);
-    layout->addWidget(approximatePushButton, 4, 2, 1, 2, Qt::AlignHCenter);
-    layout->addWidget(loadPushButton, 5, 0, Qt::AlignCenter);
-    layout->addWidget(savePushButton, 5, 1, Qt::AlignCenter);
+    auto layout_1 = new QHBoxLayout;
+    layout_1->addWidget(loadPushButton);
+    layout_1->addWidget(savePushButton);
+
+    auto layout_2 = new QVBoxLayout;
+    layout_2->addWidget(tableWidget);
+    layout_2->addLayout(layout_1);
+    layout->addLayout(layout_2);
+
+    auto layout_3 = new QHBoxLayout;
+    layout_3->addWidget(new QLabel("Order: "));
+    layout_3->addWidget(polynomialOrderComboBox);
+
+    auto layout_4 = new QVBoxLayout;
+    layout_4->addWidget(lineModeCheckBox);
+    layout_4->addWidget(polynomialModeCheckBox);
+    layout_4->addWidget(exponentionalModeCheckBox);
+    layout_4->addLayout(layout_3);
+    layout_4->addWidget(approximatePushButton);
+    layout_4->addStretch();
+    layout->addLayout(layout_4);
 
     widget->setLayout(layout);
     parent->setCentralWidget(widget);
@@ -52,4 +63,6 @@ MainWindow_Ui::MainWindow_Ui(MainWindow *parent) noexcept
     buttonGroup->setExclusive(true);
 
     polynomialModeCheckBox->setChecked(true);
+
+    tableWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
