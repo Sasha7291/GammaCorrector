@@ -39,6 +39,9 @@ MainWindow::MainWindow(QWidget *parent)
             utils::showWarningMessage(exception.what());
         }
     });
+
+    // убрать линейную аппроксимацию, передать степень полинома как параметр функции, а не шаблона
+
     connect(ui->approximatePushButton, &QPushButton::clicked, this, [this]() -> void {
         if (ui->lineModeCheckBox->checkState() == Qt::Checked)
         {

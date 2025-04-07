@@ -18,6 +18,7 @@ qt_add_executable(${PROJECT_NAME}
     tablewidget.h tablewidget.cpp
     mainwindow_ui.h mainwindow_ui.cpp
     utils.h utils.cpp
+    checkboxheaderview.h checkboxheaderview.cpp
 )
 
 add_subdirectory(lib/Csv/)
