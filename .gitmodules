@@ -7,3 +7,9 @@
 [submodule "lib/LeastSquaresApproximation"]
 	path = lib/LeastSquaresApproximation
 	url = https://github.com/Sasha7291/LeastSquaresApproximation.git
+[submodule "lib/DynamicMAtrix"]
+	path = lib/DynamicMAtrix
+	url = https://github.com/Sasha7291/DynamicMatrix.git
+[submodule "lib/DynamicMatrix"]
+	path = lib/DynamicMatrix
+	url = https://github.com/Sasha7291/DynamicMatrix.git

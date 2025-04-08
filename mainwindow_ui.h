@@ -27,9 +27,6 @@ public:
     QPointer<QPushButton> savePushButton;
     QPointer<QPushButton> loadPushButton;
     QPointer<QPushButton> approximatePushButton;
-    QPointer<QCheckBox> lineModeCheckBox;
-    QPointer<QCheckBox> polynomialModeCheckBox;
-    QPointer<QCheckBox> exponentionalModeCheckBox;
     QPointer<QComboBox> polynomialOrderComboBox;
 
 };

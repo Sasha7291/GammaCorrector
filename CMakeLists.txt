@@ -23,12 +23,12 @@ qt_add_executable(${PROJECT_NAME}
 
 add_subdirectory(lib/Csv/)
 add_subdirectory(lib/LeastSquaresApproximation/)
-add_subdirectory(lib/Matrix/)
+add_subdirectory(lib/DynamicMatrix/)
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Widgets
     csv
     lsa
-    matrix
+    dynamic_matrix
 )
 
 include(GNUInstallDirs)

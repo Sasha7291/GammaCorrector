@@ -33,25 +33,6 @@ template<std::ranges::random_access_range T, std::ranges::random_access_range K>
     }
 }
 
-// template<class K, class T>
-// [[nodiscard]] QVector<K> stdVectorToQVector(const std::vector<T> &data) noexcept
-// {
-//     if constexpr (Number<T>)
-//     {
-//         return QVector(data.cbegin(), data.cend());
-//     }
-//     else
-//     {
-//         QVector<K> result;
-//         result.reserve(data.size());
-
-//         for (const auto &line : data)
-//             result << stdVectorToQVector<K, T>(line);
-
-//         return result;
-//     }
-// }
-
 template<std::ranges::random_access_range T, std::ranges::random_access_range K>
 [[nodiscard]] T qVectorToStdVector(const K &data) noexcept
 {
@@ -70,24 +51,5 @@ template<std::ranges::random_access_range T, std::ranges::random_access_range K>
         return result;
     }
 }
-
-// template<class K, class T>
-// [[nodiscard]] std::vector<K> qVectorToStdVector(const QVector<T> &data) noexcept
-// {
-//     if constexpr (Number<T>)
-//     {
-//         return std::vector(data.begin(), data.end());
-//     }
-//     else
-//     {
-//         std::vector<K> result;
-//         result.reserve(data.size());
-
-//         for (const auto &line : data)
-//             result.push_back(qVectorToStdVector<K, T>(line));
-
-//         return result;
-//     }
-// }
 
 }
