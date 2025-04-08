@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
         try
         {
             ui->tableWidget->setValues(
-                utils::stdVectorToQVector(
+                utils::stdVectorToQVector<QVector<QVector<double>>>(
                     csv::Reader<double>()(utils::getOpenFileName().toStdString())
                 )
             );
@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
         {
             csv::Writer()(
                 utils::getSaveFileName().toStdString(),
-                utils::qVectorToStdVector(ui->tableWidget->values<double>())
+                utils::qVectorToStdVector<std::vector<std::vector<double>>>(ui->tableWidget->values<double>())
             );
         }
         catch (const csv::Exception &exception)
@@ -46,11 +46,11 @@ MainWindow::MainWindow(QWidget *parent)
         if (ui->lineModeCheckBox->checkState() == Qt::Checked)
         {
             const auto [coeffs, values] = lsa::Approximator().linear(
-                utils::qVectorToStdVector(ui->tableWidget->column<double>(0)),
-                utils::qVectorToStdVector(ui->tableWidget->column<double>(1))
+                utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(0)),
+                utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(1))
             );
 
-            ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector(values));
+            ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector<QVector<double>>(values));
         }
         else if (ui->polynomialModeCheckBox->checkState() == Qt::Checked)
         {
@@ -59,44 +59,44 @@ MainWindow::MainWindow(QWidget *parent)
             case 2:
             {
                 const auto [coeffs, values] = lsa::Approximator().polynomial<3>(
-                    utils::qVectorToStdVector(ui->tableWidget->column<double>(0)),
-                    utils::qVectorToStdVector(ui->tableWidget->column<double>(1))
+                    utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(0)),
+                    utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(1))
                 );
 
-                ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector(values));
+                ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector<QVector<double>>(values));
                 break;
             }
 
             case 3:
             {
                 const auto [coeffs, values] = lsa::Approximator().polynomial<4>(
-                    utils::qVectorToStdVector(ui->tableWidget->column<double>(0)),
-                    utils::qVectorToStdVector(ui->tableWidget->column<double>(1))
+                    utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(0)),
+                    utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(1))
                 );
 
-                ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector(values));
+                ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector<QVector<double>>(values));
                 break;
             }
 
             case 4:
             {
                 const auto [coeffs, values] = lsa::Approximator().polynomial<5>(
-                    utils::qVectorToStdVector(ui->tableWidget->column<double>(0)),
-                    utils::qVectorToStdVector(ui->tableWidget->column<double>(1))
+                    utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(0)),
+                    utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(1))
                 );
 
-                ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector(values));
+                ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector<QVector<double>>(values));
                 break;
             }
 
             case 5:
             {
                 const auto [coeffs, values] = lsa::Approximator().polynomial<6>(
-                    utils::qVectorToStdVector(ui->tableWidget->column<double>(0)),
-                    utils::qVectorToStdVector(ui->tableWidget->column<double>(1))
+                    utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(0)),
+                    utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(1))
                 );
 
-                ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector(values));
+                ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector<QVector<double>>(values));
                 break;
             }
             }
@@ -104,11 +104,11 @@ MainWindow::MainWindow(QWidget *parent)
         else if (ui->exponentionalModeCheckBox->checkState() == Qt::Checked)
         {
             const auto [coeffs, values] = lsa::Approximator().exponential(
-                utils::qVectorToStdVector(ui->tableWidget->column<double>(0)),
-                utils::qVectorToStdVector(ui->tableWidget->column<double>(1))
+                utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(0)),
+                utils::qVectorToStdVector<std::vector<double>>(ui->tableWidget->column<double>(1))
             );
 
-            ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector(values));
+            ui->tableWidget->setColumn(2, "I', A", utils::stdVectorToQVector<QVector<double>>(values));
         }
     });
 }

@@ -14,42 +14,80 @@ concept Number = std::integral<T> || std::floating_point<T>;
 [[nodiscard]] QString getSaveFileName() noexcept;
 void showWarningMessage(const QString &message) noexcept;
 
-template<class T>
-[[nodiscard]] QVector<T> stdVectorToQVector(const std::vector<T> &data) noexcept
+template<std::ranges::random_access_range T, std::ranges::random_access_range K>
+[[nodiscard]] T stdVectorToQVector(const K &data) noexcept
 {
-    return QVector(data.cbegin(), data.cend());
+    if constexpr (Number<typename T::value_type>)
+    {
+        return T(data.cbegin(), data.cend());
+    }
+    else
+    {
+        T result;
+        result.reserve(data.size());
+
+        for (const auto &line : data)
+            result << stdVectorToQVector<typename T::value_type>(line);
+
+        return result;
+    }
 }
 
-template<class T>
-[[nodiscard]] QVector<QVector<T>> stdVectorToQVector(const std::vector<std::vector<T>> &data) noexcept
+// template<class K, class T>
+// [[nodiscard]] QVector<K> stdVectorToQVector(const std::vector<T> &data) noexcept
+// {
+//     if constexpr (Number<T>)
+//     {
+//         return QVector(data.cbegin(), data.cend());
+//     }
+//     else
+//     {
+//         QVector<K> result;
+//         result.reserve(data.size());
+
+//         for (const auto &line : data)
+//             result << stdVectorToQVector<K, T>(line);
+
+//         return result;
+//     }
+// }
+
+template<std::ranges::random_access_range T, std::ranges::random_access_range K>
+[[nodiscard]] T qVectorToStdVector(const K &data) noexcept
 {
-    QVector<QVector<T>> result;
-    result.reserve(data.size());
+    if constexpr (Number<typename T::value_type>)
+    {
+        return T(data.cbegin(), data.cend());
+    }
+    else
+    {
+        T result;
+        result.reserve(data.size());
 
-    for (const auto &line : data)
-        result << QVector<T>(line.cbegin(), line.cend());
+        for (const auto &line : data)
+            result.push_back(qVectorToStdVector<typename T::value_type>(line));
 
-    return result;
+        return result;
+    }
 }
 
-template<class T>
-[[nodiscard]] std::vector<T> qVectorToStdVector(const QVector<T> &data) noexcept
-{
-    return std::vector(data.begin(), data.end());
-}
+// template<class K, class T>
+// [[nodiscard]] std::vector<K> qVectorToStdVector(const QVector<T> &data) noexcept
+// {
+//     if constexpr (Number<T>)
+//     {
+//         return std::vector(data.begin(), data.end());
+//     }
+//     else
+//     {
+//         std::vector<K> result;
+//         result.reserve(data.size());
 
-template<class T>
-[[nodiscard]] std::vector<std::vector<T>> qVectorToStdVector(const QVector<QVector<T>> &data) noexcept
-{
-    std::vector<std::vector<T>> result;
-    result.reserve(data.size());
+//         for (const auto &line : data)
+//             result.push_back(qVectorToStdVector<K, T>(line));
 
-    for (const auto &line : data)
-        result.push_back(std::vector<T>(line.cbegin(), line.cend()));
-
-    return result;
-}
-
-// попробовать написать рекурсивную функцию для любой степени вложенности векторов
+//         return result;
+//     }
+// }
 
 }
