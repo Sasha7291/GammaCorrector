@@ -57,7 +57,10 @@ void Plot::setData(
 )
 {
     if (curves_[index] == nullptr)
+    {
         curves_[index] = new Curve(this, colors_[index], name);
+        curves_[index]->setZ(index);
+    }
 
     curves_[index]->setData(keys, values);
 

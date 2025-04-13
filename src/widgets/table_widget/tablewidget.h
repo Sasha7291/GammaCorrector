@@ -12,19 +12,34 @@ class TableWidget : public QTableWidget
     Q_OBJECT
 
 public:
-    TableWidget(const QStringList &headers, QWidget *parent = nullptr) noexcept;
+    enum Column : int
+    {
+        U,
+        I,
+        I_app
+    };
+
+    TableWidget(const QStringList &headers = QStringList{}, QWidget *parent = nullptr) noexcept;
     ~TableWidget() noexcept = default;
 
     template<utils::Number T>
-    [[nodiscard]] QVector<T> column(const int columnNumber);
+    [[nodiscard]] QVector<T> column(int number);
+    void hideRowFrom(int from) noexcept;
+    void hideRowTo(int to) noexcept;
+    [[nodiscard]] bool isColumnCheckable(int number) const noexcept;
+    [[nodiscard]] bool isColumnChecked(int number) const noexcept;
     template<utils::Number T>
     void setColumn(
-        int columnNumber,
+        int number,
         const QString &label,
         const QVector<T> &values,
+        int from = 0,
         bool checkable = false,
         bool checked = false
     );
+    void setRowEnabled(int row, bool checked = true) noexcept;
+    void setRowEnabledFrom(int from, bool checked = true) noexcept;
+    void setRowEnabledTo(int to, bool checked = true) noexcept;
     template<utils::Number T>
     void setValues(const QVector<QVector<T>> &values) noexcept;
     template<utils::Number T>
@@ -35,44 +50,46 @@ signals:
 
 };
 
+
 template<utils::Number T>
-QVector<T> TableWidget::column(const int columnNumber)
+QVector<T> TableWidget::column(int number)
 {
     QVector<T> result;
     result.reserve(rowCount());
 
     for (auto i = 0ull; i < rowCount(); ++i)
-        result << get<T>(item(i, columnNumber)->data(Qt::DisplayRole));
+        result << get<T>(item(i, number)->data(Qt::DisplayRole));
 
     return result;
 }
 
 template<utils::Number T>
 void TableWidget::setColumn(
-    int columnNumber,
+    int number,
     const QString &label,
     const QVector<T> &values,
+    int from,
     bool checkable,
     bool checked
 )
 {
-    if (columnCount() <= columnNumber)
-        setColumnCount(columnNumber + 1);
-    setHorizontalHeaderItem(columnNumber, new QTableWidgetItem(label));
+    if (columnCount() <= number)
+        setColumnCount(number + 1);
+    setHorizontalHeaderItem(number, new QTableWidgetItem(label));
 
-    for (auto i = 0ll; i < values.size(); ++i)
+    for (auto i = 0; i < values.size(); ++i)
     {
         auto item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole, values[i]);
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 
-        setItem(i, columnNumber, item);
+        setItem(from + i, number, item);
     }
 
     auto header = static_cast<CheckBoxHeaderView *>(horizontalHeader());
-    header->setColumnCheckable(columnNumber, checkable);
-    header->setColumnChecked(columnNumber, checked);
+    header->setCheckable(number, checkable);
+    header->setChecked(number, checked);
 }
 
 template<utils::Number T>
@@ -82,9 +99,9 @@ void TableWidget::setValues(const QVector<QVector<T>> &values) noexcept
     for (auto i = 0; i < values[0].size(); ++i)
         headers << horizontalHeaderItem(i)->text();
     clear();
-    setHorizontalHeaderLabels(headers);
-    setRowCount(values.size());
     setColumnCount(values[0].size());
+    setRowCount(values.size());
+    setHorizontalHeaderLabels(headers);
 
     for (auto i = 0ll; i < values.size(); ++i)
         for (auto j = 0ll; j < values[i].size(); ++j)

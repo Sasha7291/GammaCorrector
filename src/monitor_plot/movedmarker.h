@@ -40,7 +40,7 @@ private:
     std::unique_ptr<QwtPlotPicker> picker_;
     std::unique_ptr<QwtPlotMarker> marker_;
     std::unique_ptr<QwtSymbol> symbol_;
-    QwtPickerMachine *lineDragStateMachine_;
+    QwtPickerMachine *dragPointStateMachine_;
     Curve *curve_;
     Plot *parent_;
 

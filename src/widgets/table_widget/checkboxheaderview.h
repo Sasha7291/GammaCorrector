@@ -11,18 +11,19 @@ public:
     CheckBoxHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr) noexcept;
     ~CheckBoxHeaderView() noexcept = default;
 
-    [[nodiscard]] bool columnChecked(int column) const noexcept;
-    void setColumnCheckable(int column, bool checkable = true) noexcept;
-    void setColumnChecked(int column, bool checked = true) noexcept;
+    [[nodiscard]] bool isCheckable(int index) const noexcept;
+    [[nodiscard]] bool isChecked(int index) const noexcept;
+    void setCheckable(int index, bool checkable = true) noexcept;
+    void setChecked(int index, bool checked = true) noexcept;
 
 signals:
-    void columnSectionClicked(int logicalIndex, bool checked);
+    void sectionChecked(int index, bool checked);
 
 protected:
     void paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const override;
 
 private:
-    QMap<int, bool> columnCheckedMap_;
+    QMap<int, bool> checkedMap_;
 
 };
 

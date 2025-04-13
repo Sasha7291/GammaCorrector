@@ -10,31 +10,36 @@ CheckBoxHeaderView::CheckBoxHeaderView(Qt::Orientation orientation, QWidget *par
 
     connect(this, &QHeaderView::sectionClicked, [this](int logicalIndex)
     {
-        if (columnCheckedMap_.contains(logicalIndex))
+        if (checkedMap_.contains(logicalIndex))
         {
-            columnCheckedMap_[logicalIndex] = !columnCheckedMap_[logicalIndex];
-            emit columnSectionClicked(logicalIndex, columnCheckedMap_[logicalIndex]);
+            checkedMap_[logicalIndex] = !checkedMap_[logicalIndex];
+            emit sectionChecked(logicalIndex, checkedMap_[logicalIndex]);
         }
     });
 }
 
-bool CheckBoxHeaderView::columnChecked(int column) const noexcept
+bool CheckBoxHeaderView::isCheckable(int index) const noexcept
 {
-    return columnCheckedMap_.value(column, false);
+    return checkedMap_.contains(index);
 }
 
-void CheckBoxHeaderView::setColumnCheckable(int column, bool checkable) noexcept
+bool CheckBoxHeaderView::isChecked(int index) const noexcept
+{
+    return checkedMap_.value(index, false);
+}
+
+void CheckBoxHeaderView::setCheckable(int index, bool checkable) noexcept
 {
     if (checkable)
-        columnCheckedMap_[column] = false;
-    else if (columnCheckedMap_.contains(column))
-        columnCheckedMap_.remove(column);
+        checkedMap_[index] = false;
+    else if (checkedMap_.contains(index))
+        checkedMap_.remove(index);
 }
 
-void CheckBoxHeaderView::setColumnChecked(int column, bool checked) noexcept
+void CheckBoxHeaderView::setChecked(int index, bool checked) noexcept
 {
-    if (columnCheckedMap_.contains(column))
-        columnCheckedMap_[column] = checked;
+    if (checkedMap_.contains(index))
+        checkedMap_[index] = checked;
 }
 
 void CheckBoxHeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
@@ -43,11 +48,11 @@ void CheckBoxHeaderView::paintSection(QPainter *painter, const QRect &rect, int 
     QHeaderView::paintSection(painter, rect, logicalIndex);
     painter->restore();
 
-    if (columnCheckedMap_.contains(logicalIndex))
+    if (checkedMap_.contains(logicalIndex))
     {
         QStyleOptionButton styleOption;
         styleOption.rect = rect.adjusted(3, 0, 0, 0);
-        styleOption.state = QStyle::State_Enabled | (columnCheckedMap_[logicalIndex] ? QStyle::State_On : QStyle::State_Off);
+        styleOption.state = QStyle::State_Enabled | (checkedMap_[logicalIndex] ? QStyle::State_On : QStyle::State_Off);
 
         style()->drawControl(QStyle::CE_CheckBox, &styleOption, painter);
     }

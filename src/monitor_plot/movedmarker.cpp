@@ -22,28 +22,28 @@ MovedMarker::MovedMarker(Plot *parent, Curve *curve)
     , symbol_(std::make_unique<QwtSymbol>(
         QwtSymbol::XCross,
         QBrush(Qt::NoBrush),
-        QPen(Qt::green),
+        QPen(Qt::darkGreen),
         QSize(10, 10)
     ))
-    , lineDragStateMachine_(new QwtPickerDragPointMachine)
+    , dragPointStateMachine_(new QwtPickerDragPointMachine)
     , curve_(curve)
     , parent_(parent)
     , precision_(5.0)
 {
-    marker_->setLinePen(QPen(Qt::green, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+    marker_->setLinePen(QPen(Qt::darkGreen, 1.0, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
     marker_->setLineStyle(QwtPlotMarker::VLine);
     marker_->setSymbol(symbol_.get());
     marker_->attach(parent);
 
-    picker_->setRubberBandPen(QPen(Qt::NoPen));
-    picker_->setStateMachine(lineDragStateMachine_);
+    picker_->setRubberBandPen(Qt::NoPen);
+    picker_->setStateMachine(dragPointStateMachine_);
 
     connect(picker_.get(), SIGNAL(moved(QPointF)), this, SLOT(move(QPointF)));
 }
 
 MovedMarker::~MovedMarker()
 {
-    delete lineDragStateMachine_;
+    delete dragPointStateMachine_;
 }
 
 void MovedMarker::hide()
