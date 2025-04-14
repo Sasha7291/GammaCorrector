@@ -28,15 +28,16 @@ MainWindow::~MainWindow() {}
 
 void MainWindow::approximate()
 {
-    auto x = ui->tableWidget->column<double>(TableWidget::U);
-    auto y = ui->tableWidget->column<double>(TableWidget::I);
+    const auto x = ui->tableWidget->column<double>(TableWidget::U);
+    const auto y = ui->tableWidget->column<double>(TableWidget::I);
 
     if (!x.empty() && !y.empty())
         try
         {
             const auto [coeffs, values] = lsa::Approximator().polynomial(x, y, ui->polynomialOrderComboBox->currentPolynomialOrder());
 
-            ui->tableWidget->setColumn(TableWidget::I_app, "I', A", values, 0, true, true);
+            ui->tableWidget->hideRowTo(0);
+            ui->tableWidget->setColumn(TableWidget::I_app, values, "I', A", 0, true, true);
             ui->statisticsTextEdit->setStatistics(lsa::Statistics()(x, y, values));
             ui->equationTextEdit->setEquation("V", "I", coeffs);
             ui->plot->setData({ x, x }, { y, values }, { "I, A", "I', A" });
@@ -71,7 +72,6 @@ void MainWindow::loadData()
 
 void MainWindow::reapproximate(int index, const QPointF &pos)
 {
-    ui->tableWidget->hideRowTo(index);
     const auto x = ui->tableWidget->column<double>(TableWidget::U);
     const auto y = ui->tableWidget->column<double>(TableWidget::I);
     const auto slicedX = x.last(x.size() - index);
@@ -84,12 +84,13 @@ void MainWindow::reapproximate(int index, const QPointF &pos)
 
             ui->tableWidget->setColumn(
                 TableWidget::I_app,
-                "I', A",
                 values,
+                QString{},
                 index,
                 ui->tableWidget->isColumnCheckable(TableWidget::I_app),
                 ui->tableWidget->isColumnChecked(TableWidget::I_app)
             );
+            ui->tableWidget->hideRowTo(index);
             ui->statisticsTextEdit->setStatistics(lsa::Statistics()(slicedX, slicedY, values));
             ui->equationTextEdit->setEquation("V", "I", coeffs);
             ui->plot->setData(1, slicedX, values, "I', A");

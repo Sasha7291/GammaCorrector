@@ -8,13 +8,9 @@ CheckBoxHeaderView::CheckBoxHeaderView(Qt::Orientation orientation, QWidget *par
 {
     setSectionsClickable(true);
 
-    connect(this, &QHeaderView::sectionClicked, [this](int logicalIndex)
+    connect(this, &QHeaderView::sectionClicked, [this](int index)
     {
-        if (checkedMap_.contains(logicalIndex))
-        {
-            checkedMap_[logicalIndex] = !checkedMap_[logicalIndex];
-            emit sectionChecked(logicalIndex, checkedMap_[logicalIndex]);
-        }
+        setChecked(index, !isChecked(index));
     });
 }
 
@@ -32,14 +28,17 @@ void CheckBoxHeaderView::setCheckable(int index, bool checkable) noexcept
 {
     if (checkable)
         checkedMap_[index] = false;
-    else if (checkedMap_.contains(index))
+    else if (isCheckable(index))
         checkedMap_.remove(index);
 }
 
 void CheckBoxHeaderView::setChecked(int index, bool checked) noexcept
 {
-    if (checkedMap_.contains(index))
+    if (isCheckable(index))
+    {
         checkedMap_[index] = checked;
+        emit sectionChecked(index, checked);
+    }
 }
 
 void CheckBoxHeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
@@ -48,11 +47,11 @@ void CheckBoxHeaderView::paintSection(QPainter *painter, const QRect &rect, int 
     QHeaderView::paintSection(painter, rect, logicalIndex);
     painter->restore();
 
-    if (checkedMap_.contains(logicalIndex))
+    if (isCheckable(logicalIndex))
     {
         QStyleOptionButton styleOption;
         styleOption.rect = rect.adjusted(3, 0, 0, 0);
-        styleOption.state = QStyle::State_Enabled | (checkedMap_[logicalIndex] ? QStyle::State_On : QStyle::State_Off);
+        styleOption.state = QStyle::State_Enabled | (isChecked(logicalIndex) ? QStyle::State_On : QStyle::State_Off);
 
         style()->drawControl(QStyle::CE_CheckBox, &styleOption, painter);
     }

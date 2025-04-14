@@ -29,8 +29,9 @@ Plot::Plot(QWidget *parent)
     , legend_(std::make_unique<Legend>(this))
     , movedMarker_(nullptr)
 {
-    static_cast<QwtPlotCanvas*>(canvas())->setPaintAttribute(QwtPlotCanvas::BackingStore, false);
-    static_cast<QwtPlotCanvas*>(canvas())->setBorderRadius(10);
+    auto plotCanvas = static_cast<QwtPlotCanvas*>(canvas());
+    plotCanvas->setPaintAttribute(QwtPlotCanvas::BackingStore, false);
+    plotCanvas->setBorderRadius(10);
     plotLayout()->setAlignCanvasToScales(true);
     setCanvasBackground(QBrush(Qt::white));
     setAxisFont(xBottom, QFont("Bahnschrift"));

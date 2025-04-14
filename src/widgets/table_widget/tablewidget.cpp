@@ -60,8 +60,5 @@ void TableWidget::setRowEnabledFrom(int from, bool checked) noexcept
 
 void TableWidget::setRowEnabledTo(int to, bool checked) noexcept
 {
-    for (auto i = 0; i < to; ++i)
-        setRowEnabled(i, checked);
-    for (auto i = to; i < rowCount(); ++i)
-        setRowEnabled(i, !checked);
+    setRowEnabled(to, !checked);
 }

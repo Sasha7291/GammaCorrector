@@ -71,7 +71,7 @@ void MovedMarker::show()
 
 void MovedMarker::setMark()
 {
-    long unsigned index = std::lround(marker_->xValue() - origin_) / range_ * curve_->dataSize();
+    auto index = std::lround(marker_->xValue() - origin_ / range_ * curve_->dataSize());
     marker_->setValue(curve_->sample(index));
     parent_->replot();
 
@@ -84,7 +84,7 @@ void MovedMarker::move(const QPointF &pos)
         || pos.x() > (origin_ + range_) - 0.005 * range_)
         return;
 
-    int index = (pos.x() - origin_) / range_ * curve_->dataSize();
+    auto index = std::lround((pos.x() - origin_) / range_ * curve_->dataSize());
     marker_->setValue(curve_->sample(index));
     parent_->replot();
 

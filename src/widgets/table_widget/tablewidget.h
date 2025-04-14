@@ -31,8 +31,8 @@ public:
     template<utils::Number T>
     void setColumn(
         int number,
-        const QString &label,
         const QVector<T> &values,
+        const QString &label = QString{},
         int from = 0,
         bool checkable = false,
         bool checked = false
@@ -66,8 +66,8 @@ QVector<T> TableWidget::column(int number)
 template<utils::Number T>
 void TableWidget::setColumn(
     int number,
-    const QString &label,
     const QVector<T> &values,
+    const QString &label,
     int from,
     bool checkable,
     bool checked
@@ -75,7 +75,8 @@ void TableWidget::setColumn(
 {
     if (columnCount() <= number)
         setColumnCount(number + 1);
-    setHorizontalHeaderItem(number, new QTableWidgetItem(label));
+    if (!label.isEmpty())
+        setHorizontalHeaderItem(number, new QTableWidgetItem(label));
 
     for (auto i = 0; i < values.size(); ++i)
     {

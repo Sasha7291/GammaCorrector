@@ -12,15 +12,16 @@ EquationTextEdit::EquationTextEdit(QWidget *parent) noexcept
 
 void EquationTextEdit::setEquation(const QString &abscissaName, const QString &ordinateName, const QVector<double> &coeffs) noexcept
 {
-    QString tempEquation = QString{};
+    QString temp = QString{};
 
     for (auto i = 0ll; i < coeffs.size(); ++i)
         if (i == 0ll)
-            tempEquation += QString::number(coeffs[0]);
+            temp += QString::number(coeffs[0]);
         else if (i == 1ll)
-            tempEquation += " " + utils::sign(coeffs[1]) + " " + QString::number(std::abs(coeffs[1])) + " * " + abscissaName;
-        else
-            tempEquation += " " + utils::sign(coeffs[i]) + " " + QString::number(std::abs(coeffs[i])) + " * " + abscissaName + "<sup>" + QString::number(i) + "</sup>";
+            temp += " " + utils::sign(coeffs[1]) + " " + QString::number(std::abs(coeffs[1])) + " * " + abscissaName;
+        else [[likely]]
+            temp += " " + utils::sign(coeffs[i]) + " " + QString::number(std::abs(coeffs[i])) + " * " + abscissaName
+                        + "<sup>" + QString::number(i) + "</sup>";
 
-    setHtml(_PATTERN_.arg(ordinateName, tempEquation));
+    setHtml(_PATTERN_.arg(ordinateName, temp));
 }
