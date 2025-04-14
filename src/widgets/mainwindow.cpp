@@ -37,7 +37,7 @@ void MainWindow::approximate()
             const auto [coeffs, values] = lsa::Approximator().polynomial(x, y, ui->polynomialOrderComboBox->currentPolynomialOrder());
 
             ui->tableWidget->setColumn(TableWidget::I_app, "I', A", values, 0, true, true);
-            ui->statisticsTextEdit->setStatistics(lsa::Statistics()(x, y));
+            ui->statisticsTextEdit->setStatistics(lsa::Statistics()(x, y, values));
             ui->equationTextEdit->setEquation("V", "I", coeffs);
             ui->plot->setData({ x, x }, { y, values }, { "I, A", "I', A" });
             ui->plot->showMarker();
@@ -90,7 +90,7 @@ void MainWindow::reapproximate(int index, const QPointF &pos)
                 ui->tableWidget->isColumnCheckable(TableWidget::I_app),
                 ui->tableWidget->isColumnChecked(TableWidget::I_app)
             );
-            ui->statisticsTextEdit->setStatistics(lsa::Statistics()(slicedX, slicedY));
+            ui->statisticsTextEdit->setStatistics(lsa::Statistics()(slicedX, slicedY, values));
             ui->equationTextEdit->setEquation("V", "I", coeffs);
             ui->plot->setData(1, slicedX, values, "I', A");
         }
