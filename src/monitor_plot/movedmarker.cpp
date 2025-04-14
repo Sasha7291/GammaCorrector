@@ -28,7 +28,6 @@ MovedMarker::MovedMarker(Plot *parent, Curve *curve)
     , dragPointStateMachine_(new QwtPickerDragPointMachine)
     , curve_(curve)
     , parent_(parent)
-    , precision_(5.0)
 {
     marker_->setLinePen(QPen(Qt::darkGreen, 1.0, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
     marker_->setLineStyle(QwtPlotMarker::VLine);
@@ -57,8 +56,7 @@ void MovedMarker::reset(const double origin, const double end)
 {
     origin_ = origin;
     range_ = end - origin;
-    precision_ = 0.05 * range_;
-    marker_->setValue(origin + precision_, 0.0);
+    marker_->setValue(origin + 0.05 * range_, 0.0);
 
     setMark();
 }
@@ -86,12 +84,9 @@ void MovedMarker::move(const QPointF &pos)
         || pos.x() > (origin_ + range_) - 0.005 * range_)
         return;
 
-    if (abs(pos.x() - marker_->xValue()) < precision_)
-    {
-        int index = (pos.x() - origin_) / range_ * curve_->dataSize();
-        marker_->setValue(curve_->sample(index));
-        parent_->replot();
+    int index = (pos.x() - origin_) / range_ * curve_->dataSize();
+    marker_->setValue(curve_->sample(index));
+    parent_->replot();
 
-        emit moved(index, marker_->value());
-    }
+    emit moved(index, marker_->value());
 }

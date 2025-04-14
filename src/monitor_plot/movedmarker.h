@@ -46,7 +46,6 @@ private:
 
     double origin_;
     double range_;
-    double precision_;
     bool shown_;
 
 };
