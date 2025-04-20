@@ -4,7 +4,7 @@
 StatisticsTextEdit::StatisticsTextEdit(QWidget *parent) noexcept
     : QTextEdit{parent}
 {
-    setFixedWidth(90);
+    setFixedWidth(100);
     setMinimumHeight(90);
 }
 

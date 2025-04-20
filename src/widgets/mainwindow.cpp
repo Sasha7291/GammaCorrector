@@ -6,7 +6,9 @@
 #include "csv_reader.hpp"
 #include "csv_writer.hpp"
 #include "lsa_approximator.hpp"
-#include "lsa_statistics.hpp"
+#include "psr_curvesproximity.h"
+#include "psr_pearsoncoefficient.h"
+#include "psr_spearmancoefficient.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -38,7 +40,12 @@ void MainWindow::approximate()
 
             ui->tableWidget->hideRowTo(0);
             ui->tableWidget->setColumn(TableWidget::I_app, values, "I', A", 0, true, true);
-            ui->statisticsTextEdit->setStatistics(lsa::Statistics()(x, y, values));
+            ui->statisticsTextEdit->setStatistics({
+                psr::PearsonCoefficient<double>{}(x, y),
+                psr::SpearmanCoefficient<double>{}(x, y),
+                psr::CurvesProximity<double>{}(x, y, values),
+                psr::CurvesProximity<double>{}(y, values)
+            });
             ui->equationTextEdit->setEquation("V", "I", coeffs);
             ui->plot->setData({ x, x }, { y, values }, { "I, A", "I', A" });
             ui->plot->showMarker();
@@ -91,7 +98,12 @@ void MainWindow::reapproximate(int index, const QPointF &pos)
                 ui->tableWidget->isColumnChecked(TableWidget::I_app)
             );
             ui->tableWidget->hideRowTo(index);
-            ui->statisticsTextEdit->setStatistics(lsa::Statistics()(slicedX, slicedY, values));
+            ui->statisticsTextEdit->setStatistics({
+                psr::PearsonCoefficient<double>{}(slicedX, slicedY),
+                psr::SpearmanCoefficient<double>{}(slicedX, slicedY),
+                psr::CurvesProximity<double>{}(slicedX, slicedY, values),
+                psr::CurvesProximity<double>{}(slicedY, values)
+            });
             ui->equationTextEdit->setEquation("V", "I", coeffs);
             ui->plot->setData(1, slicedX, values, "I', A");
         }
