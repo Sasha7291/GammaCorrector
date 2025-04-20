@@ -1,17 +1,11 @@
 [submodule "lib/Csv"]
 	path = lib/Csv
 	url = https://github.com/Sasha7291/Csv.git
-[submodule "lib/Matrix"]
-	path = lib/Matrix
-	url = https://github.com/Sasha7291/Matrix.git
 [submodule "lib/LeastSquaresApproximation"]
-	path = lib/LeastSquaresApproximation
+	path = lib/lsa
 	url = https://github.com/Sasha7291/LeastSquaresApproximation.git
-[submodule "lib/DynamicMAtrix"]
-	path = lib/DynamicMAtrix
-	url = https://github.com/Sasha7291/DynamicMatrix.git
-[submodule "lib/DynamicMatrix"]
-	path = lib/DynamicMatrix
+[submodule "lib/dynamic_matrix"]
+	path = lib/dynamic_matrix
 	url = https://github.com/Sasha7291/DynamicMatrix.git
 [submodule "lib/psr"]
 	path = lib/psr
