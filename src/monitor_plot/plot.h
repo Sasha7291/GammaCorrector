@@ -22,6 +22,8 @@ public:
     Plot &operator=(const Plot&) = delete;
     Plot &operator=(Plot&&) = delete;
 
+    [[nodiscard]] std::pair<int, QPointF> currentMarkerPosition() const noexcept;
+    [[nodiscard]] bool isMovedMarkerShown() const noexcept;
     void setData(
         const QVector<QVector<double>> &keys,
         const QVector<QVector<double>> &values,

@@ -16,7 +16,6 @@ public:
 private slots:
     void approximate();
     void loadData();
-    void reapproximate(int index, [[maybe_unused]] const QPointF &pos);
     void saveData();
 
 private:

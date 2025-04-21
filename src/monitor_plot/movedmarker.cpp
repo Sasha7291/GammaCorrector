@@ -32,7 +32,6 @@ MovedMarker::MovedMarker(Plot *parent, Curve *curve)
     marker_->setLinePen(QPen(Qt::darkGreen, 1.0, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
     marker_->setLineStyle(QwtPlotMarker::VLine);
     marker_->setSymbol(symbol_);
-    marker_->attach(parent);
 
     picker_->setRubberBandPen(Qt::NoPen);
     picker_->setStateMachine(dragPointStateMachine_);
@@ -45,8 +44,15 @@ MovedMarker::~MovedMarker()
     delete dragPointStateMachine_;
 }
 
+std::pair<int, QPointF> MovedMarker::currentPosition() const noexcept
+{
+    auto index = std::lround((marker_->xValue() - origin_) / range_ * curve_->dataSize());
+    return std::make_pair(index, curve_->sample(index));
+}
+
 void MovedMarker::hide()
 {
+    shown_ = false;
     marker_->detach();
     disconnect(picker_, SIGNAL(moved(QPointF)), this, SLOT(move(QPointF)));
 }
@@ -62,6 +68,7 @@ void MovedMarker::reset(const double origin, const double end)
 
 void MovedMarker::show()
 {
+    shown_ = true;
     marker_->attach(parent_);
     connect(picker_, SIGNAL(moved(QPointF)), this, SLOT(move(QPointF)));
     setMark();
@@ -69,7 +76,7 @@ void MovedMarker::show()
 
 void MovedMarker::setMark()
 {
-    auto index = std::lround(marker_->xValue() - origin_ / range_ * curve_->dataSize());
+    auto index = std::lround((marker_->xValue() - origin_) / range_ * curve_->dataSize());
     marker_->setValue(curve_->sample(index));
     parent_->replot();
 

@@ -4,6 +4,7 @@
 
 #include <QFormLayout>
 #include <QGridLayout>
+#include <QSplitter>
 
 
 MainWindow_Ui::MainWindow_Ui(MainWindow *parent) noexcept
@@ -15,8 +16,8 @@ MainWindow_Ui::MainWindow_Ui(MainWindow *parent) noexcept
     , equationTextEdit{new EquationTextEdit{parent}}
     , statisticsTextEdit{new StatisticsTextEdit{parent}}
     , plot{new Plot{parent}}
-    , medianFilterCheckBox{new QCheckBox{"Median filter", parent}}
-    , gaussFilterCheckBox{new QCheckBox{"Gauss filter", parent}}
+    , filterCheckBox{new QCheckBox{"Filtering", parent}}
+    , filterWidthComboBox{new FilterWidthComboBox{parent}}
 {
     auto widget = new QWidget{parent};
     auto mainLayout = new QGridLayout{widget};
@@ -29,16 +30,20 @@ MainWindow_Ui::MainWindow_Ui(MainWindow *parent) noexcept
     auto layout_2 = new QFormLayout;
     layout_2->addRow("Order: ", polynomialOrderComboBox);
 
-    auto layout_3 = new QVBoxLayout;
-    layout_3->addLayout(layout_2);
-    layout_3->addWidget(approximatePushButton);
-    layout_3->addWidget(medianFilterCheckBox);
-    layout_3->addWidget(gaussFilterCheckBox);
-    layout_3->addWidget(statisticsTextEdit);
+    auto layout_3 = new QFormLayout;
+    layout_3->addRow("Width: ", filterWidthComboBox);
+
+    auto layout_4 = new QVBoxLayout;
+    layout_4->addLayout(layout_2);
+    layout_4->addWidget(approximatePushButton);
+    layout_4->addWidget(new QSplitter{});
+    layout_4->addLayout(layout_3);
+    layout_4->addWidget(filterCheckBox);
+    layout_4->addWidget(statisticsTextEdit);
 
     mainLayout->addWidget(tableWidget, 0, 0);
     mainLayout->addWidget(equationTextEdit, 1, 0);
-    mainLayout->addLayout(layout_3, 0, 1, 2, 1);
+    mainLayout->addLayout(layout_4, 0, 1, 2, 1);
     mainLayout->addLayout(layout_1, 2, 0, 1, 2);
     mainLayout->addWidget(plot, 0, 2, 3, 1);
 

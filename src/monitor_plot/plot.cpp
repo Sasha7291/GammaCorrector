@@ -38,6 +38,16 @@ Plot::Plot(QWidget *parent)
     setAxisFont(yLeft, QFont("Bahnschrift"));
 }
 
+std::pair<int, QPointF> Plot::currentMarkerPosition() const noexcept
+{
+    return movedMarker_->currentPosition();
+}
+
+bool Plot::isMovedMarkerShown() const noexcept
+{
+    return movedMarker_ != nullptr && movedMarker_->isShown();
+}
+
 void Plot::setData(
     const QVector<QVector<double>> &keys,
     const QVector<QVector<double>> &values,
@@ -96,4 +106,5 @@ void Plot::showMarker()
     }
 
     movedMarker_->reset(curves_[0]->minXValue(), curves_[0]->maxXValue());
+    movedMarker_->show();
 }

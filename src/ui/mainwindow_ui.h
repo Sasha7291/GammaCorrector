@@ -1,6 +1,7 @@
 #pragma once
 
 #include "equationtextedit.h"
+#include "filterwidthcombobox.h"
 #include "plot.h"
 #include "polynomialordercombobox.h"
 #include "statisticstextedit.h"
@@ -35,7 +36,7 @@ public:
     QPointer<EquationTextEdit> equationTextEdit;
     QPointer<StatisticsTextEdit> statisticsTextEdit;
     QPointer<Plot> plot;
-    QPointer<QCheckBox> medianFilterCheckBox;
-    QPointer<QCheckBox> gaussFilterCheckBox;
+    QPointer<QCheckBox> filterCheckBox;
+    QPointer<FilterWidthComboBox> filterWidthComboBox;
 
 };

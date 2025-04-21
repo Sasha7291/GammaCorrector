@@ -18,8 +18,9 @@ private:
         R"(
         <h3>Statistics:</h3>
         r = %1<br>
-        &delta; = %2<br>
-        &Delta; = %3
+        &rho; = %2<br>
+        &delta; = %3<br>
+        &Delta; = %4
         )";
 
 };

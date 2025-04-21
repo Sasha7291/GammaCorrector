@@ -21,7 +21,9 @@ public:
     MovedMarker &operator=(const MovedMarker&) = delete;
     MovedMarker &operator=(MovedMarker&&) = delete;
 
+    [[nodiscard]] std::pair<int, QPointF> currentPosition() const noexcept;
     void hide();
+    [[nodiscard]] inline bool isShown() const noexcept { return shown_; }
     void reset(const double origin, const double end);
     void setColor(const QColor &color);
     void show();
@@ -45,5 +47,6 @@ private:
 
     double origin_;
     double range_;
+    bool shown_;
 
 };
