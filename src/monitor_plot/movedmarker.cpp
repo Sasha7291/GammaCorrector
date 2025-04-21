@@ -10,34 +10,34 @@
 
 
 MovedMarker::MovedMarker(Plot *parent, Curve *curve)
-    : QObject(parent)
-    , picker_(std::make_unique<QwtPlotPicker>(
+    : QObject{parent}
+    , picker_{new QwtPlotPicker{
         parent->xBottom,
         parent->yLeft,
         QwtPicker::NoRubberBand,
         QwtPicker::AlwaysOn,
-        parent->canvas())
-    )
-    , marker_(std::make_unique<QwtPlotMarker>())
-    , symbol_(std::make_unique<QwtSymbol>(
+        parent->canvas()
+    }}
+    , marker_{new QwtPlotMarker}
+    , symbol_{new QwtSymbol{
         QwtSymbol::XCross,
         QBrush(Qt::NoBrush),
         QPen(Qt::darkGreen),
         QSize(10, 10)
-    ))
-    , dragPointStateMachine_(new QwtPickerDragPointMachine)
-    , curve_(curve)
-    , parent_(parent)
+    }}
+    , dragPointStateMachine_{new QwtPickerDragPointMachine}
+    , curve_{curve}
+    , parent_{parent}
 {
     marker_->setLinePen(QPen(Qt::darkGreen, 1.0, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
     marker_->setLineStyle(QwtPlotMarker::VLine);
-    marker_->setSymbol(symbol_.get());
+    marker_->setSymbol(symbol_);
     marker_->attach(parent);
 
     picker_->setRubberBandPen(Qt::NoPen);
     picker_->setStateMachine(dragPointStateMachine_);
 
-    connect(picker_.get(), SIGNAL(moved(QPointF)), this, SLOT(move(QPointF)));
+    connect(picker_, SIGNAL(moved(QPointF)), this, SLOT(move(QPointF)));
 }
 
 MovedMarker::~MovedMarker()
@@ -47,9 +47,8 @@ MovedMarker::~MovedMarker()
 
 void MovedMarker::hide()
 {
-    shown_ = false;
     marker_->detach();
-    disconnect(picker_.get(), SIGNAL(moved(QPointF)), this, SLOT(move(QPointF)));
+    disconnect(picker_, SIGNAL(moved(QPointF)), this, SLOT(move(QPointF)));
 }
 
 void MovedMarker::reset(const double origin, const double end)
@@ -63,9 +62,8 @@ void MovedMarker::reset(const double origin, const double end)
 
 void MovedMarker::show()
 {
-    shown_ = true;
     marker_->attach(parent_);
-    connect(picker_.get(), SIGNAL(moved(QPointF)), this, SLOT(move(QPointF)));
+    connect(picker_, SIGNAL(moved(QPointF)), this, SLOT(move(QPointF)));
     setMark();
 }
 

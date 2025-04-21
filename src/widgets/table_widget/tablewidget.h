@@ -1,6 +1,5 @@
 #pragma once
 
-#include "checkboxheaderview.h"
 #include "utils.h"
 
 #include <QHeaderView>
@@ -12,13 +11,6 @@ class TableWidget : public QTableWidget
     Q_OBJECT
 
 public:
-    enum Column : int
-    {
-        U,
-        I,
-        I_app
-    };
-
     TableWidget(const QStringList &headers = QStringList{}, QWidget *parent = nullptr) noexcept;
     ~TableWidget() noexcept = default;
 
@@ -29,14 +21,14 @@ public:
     [[nodiscard]] bool isColumnCheckable(int number) const noexcept;
     [[nodiscard]] bool isColumnChecked(int number) const noexcept;
     template<utils::Number T>
-    void setColumn(
-        int number,
+    void setColumnValues(
+        int column,
         const QVector<T> &values,
         const QString &label = QString{},
-        int from = 0,
-        bool checkable = false,
-        bool checked = false
+        int from = 0
     );
+    void setColumnCheckable(int column, bool checkable = true);
+    void setColumnChecked(int column, bool checked = true);
     void setRowEnabled(int row, bool checked = true) noexcept;
     void setRowEnabledFrom(int from, bool checked = true) noexcept;
     void setRowEnabledTo(int to, bool checked = true) noexcept;
@@ -64,19 +56,17 @@ QVector<T> TableWidget::column(int number)
 }
 
 template<utils::Number T>
-void TableWidget::setColumn(
-    int number,
+void TableWidget::setColumnValues(
+    int column,
     const QVector<T> &values,
     const QString &label,
-    int from,
-    bool checkable,
-    bool checked
+    int from
 )
 {
-    if (columnCount() <= number)
-        setColumnCount(number + 1);
+    if (columnCount() <= column)
+        setColumnCount(column + 1);
     if (!label.isEmpty())
-        setHorizontalHeaderItem(number, new QTableWidgetItem(label));
+        setHorizontalHeaderItem(column, new QTableWidgetItem(label));
 
     for (auto i = 0; i < values.size(); ++i)
     {
@@ -85,12 +75,8 @@ void TableWidget::setColumn(
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 
-        setItem(from + i, number, item);
+        setItem(from + i, column, item);
     }
-
-    auto header = static_cast<CheckBoxHeaderView *>(horizontalHeader());
-    header->setCheckable(number, checkable);
-    header->setChecked(number, checked);
 }
 
 template<utils::Number T>

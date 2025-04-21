@@ -22,7 +22,6 @@ public:
     MovedMarker &operator=(MovedMarker&&) = delete;
 
     void hide();
-    inline bool isShown() const { return shown_; }
     void reset(const double origin, const double end);
     void setColor(const QColor &color);
     void show();
@@ -37,15 +36,14 @@ private slots:
     void move(const QPointF &pos);
 
 private:
-    std::unique_ptr<QwtPlotPicker> picker_;
-    std::unique_ptr<QwtPlotMarker> marker_;
-    std::unique_ptr<QwtSymbol> symbol_;
+    QwtPlotPicker *picker_;
+    QwtPlotMarker *marker_;
+    QwtSymbol *symbol_;
     QwtPickerMachine *dragPointStateMachine_;
     Curve *curve_;
     Plot *parent_;
 
     double origin_;
     double range_;
-    bool shown_;
 
 };

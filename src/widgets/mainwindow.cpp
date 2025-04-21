@@ -30,8 +30,8 @@ MainWindow::~MainWindow() {}
 
 void MainWindow::approximate()
 {
-    const auto x = ui->tableWidget->column<double>(TableWidget::U);
-    const auto y = ui->tableWidget->column<double>(TableWidget::I);
+    const auto x = ui->tableWidget->column<double>(0);
+    const auto y = ui->tableWidget->column<double>(1);
 
     if (!x.empty() && !y.empty())
         try
@@ -39,10 +39,11 @@ void MainWindow::approximate()
             const auto [coeffs, values] = lsa::Approximator().polynomial(x, y, ui->polynomialOrderComboBox->currentPolynomialOrder());
 
             ui->tableWidget->hideRowTo(0);
-            ui->tableWidget->setColumn(TableWidget::I_app, values, "I', A", 0, true, true);
+            ui->tableWidget->setColumnValues(2, values, "I', A", 0);
+            ui->tableWidget->setColumnCheckable(2, true);
+            ui->tableWidget->setColumnChecked(2, true);
             ui->statisticsTextEdit->setStatistics({
                 psr::PearsonCoefficient<double>{}(x, y),
-                psr::SpearmanCoefficient<double>{}(x, y),
                 psr::CurvesProximity<double>{}(x, y, values),
                 psr::CurvesProximity<double>{}(y, values)
             });
@@ -65,9 +66,12 @@ void MainWindow::loadData()
         );
 
         ui->tableWidget->setValues(data);
+        ui->tableWidget->setColumnCheckable(0, false);
+        ui->tableWidget->setColumnCheckable(1, true);
+        ui->tableWidget->setColumnChecked(1, true);
         ui->plot->setData(
-            { ui->tableWidget->column<double>(TableWidget::U) },
-            { ui->tableWidget->column<double>(TableWidget::I) },
+            { ui->tableWidget->column<double>(0) },
+            { ui->tableWidget->column<double>(1) },
             { "I, A" }
         );
     }
@@ -79,8 +83,8 @@ void MainWindow::loadData()
 
 void MainWindow::reapproximate(int index, const QPointF &pos)
 {
-    const auto x = ui->tableWidget->column<double>(TableWidget::U);
-    const auto y = ui->tableWidget->column<double>(TableWidget::I);
+    const auto x = ui->tableWidget->column<double>(0);
+    const auto y = ui->tableWidget->column<double>(1);
     const auto slicedX = x.last(x.size() - index);
     const auto slicedY = y.last(y.size() - index);
 
@@ -89,18 +93,10 @@ void MainWindow::reapproximate(int index, const QPointF &pos)
         {
             const auto [coeffs, values] = lsa::Approximator().polynomial(slicedX, slicedY, ui->polynomialOrderComboBox->currentPolynomialOrder());
 
-            ui->tableWidget->setColumn(
-                TableWidget::I_app,
-                values,
-                QString{},
-                index,
-                ui->tableWidget->isColumnCheckable(TableWidget::I_app),
-                ui->tableWidget->isColumnChecked(TableWidget::I_app)
-            );
+            ui->tableWidget->setColumnValues(2, values, QString{}, index);
             ui->tableWidget->hideRowTo(index);
             ui->statisticsTextEdit->setStatistics({
                 psr::PearsonCoefficient<double>{}(slicedX, slicedY),
-                psr::SpearmanCoefficient<double>{}(slicedX, slicedY),
                 psr::CurvesProximity<double>{}(slicedX, slicedY, values),
                 psr::CurvesProximity<double>{}(slicedY, values)
             });

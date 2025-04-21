@@ -1,19 +1,19 @@
 #include "tablewidget.h"
 
+#include "checkboxheaderview.h"
+
 
 TableWidget::TableWidget(const QStringList &headers, QWidget *parent) noexcept
-    : QTableWidget(parent)
+    : QTableWidget{parent}
 {
     setColumnCount(headers.size());
     setSortingEnabled(false);
     verticalHeader()->hide();
 
-    auto header = new CheckBoxHeaderView(Qt::Horizontal, this);
+    auto header = new CheckBoxHeaderView{Qt::Horizontal, this};
     setHorizontalHeader(header);
     setHorizontalHeaderLabels(headers);
     header->setSectionResizeMode(QHeaderView::Stretch);
-    header->setCheckable(I);
-    header->setChecked(I);
 
     connect(header, &CheckBoxHeaderView::sectionChecked, this, &TableWidget::columnChecked);
 }
@@ -42,6 +42,16 @@ bool TableWidget::isColumnCheckable(int number) const noexcept
 bool TableWidget::isColumnChecked(int number) const noexcept
 {
     return static_cast<CheckBoxHeaderView *>(horizontalHeader())->isChecked(number);
+}
+
+void TableWidget::setColumnCheckable(int column, bool checkable)
+{
+    static_cast<CheckBoxHeaderView *>(horizontalHeader())->setCheckable(column, checkable);
+}
+
+void TableWidget::setColumnChecked(int column, bool checked)
+{
+    static_cast<CheckBoxHeaderView *>(horizontalHeader())->setChecked(column, checked);
 }
 
 void TableWidget::setRowEnabled(int row, bool checked) noexcept

@@ -35,5 +35,7 @@ public:
     QPointer<EquationTextEdit> equationTextEdit;
     QPointer<StatisticsTextEdit> statisticsTextEdit;
     QPointer<Plot> plot;
+    QPointer<QCheckBox> medianFilterCheckBox;
+    QPointer<QCheckBox> gaussFilterCheckBox;
 
 };

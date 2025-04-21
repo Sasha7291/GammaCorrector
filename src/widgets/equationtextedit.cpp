@@ -8,6 +8,7 @@ EquationTextEdit::EquationTextEdit(QWidget *parent) noexcept
 {
     setFixedWidth(325);
     setMaximumHeight(60);
+    setReadOnly(true);
 }
 
 void EquationTextEdit::setEquation(const QString &abscissaName, const QString &ordinateName, const QVector<double> &coeffs) noexcept

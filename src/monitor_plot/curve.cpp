@@ -4,9 +4,9 @@
 #include <QwtPlot>
 
 
-Curve::Curve(QwtPlot *parent, const QColor color, const QString name)
-    : QwtPlotCurve()
-    , parent_(parent)
+Curve::Curve(QwtPlot *parent, const QColor color, const QString &name)
+    : QwtPlotCurve{}
+    , parent_{parent}
 {
     setPen(QPen(color, 2.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     setCurveAttribute(Fitted);

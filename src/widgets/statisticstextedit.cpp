@@ -6,6 +6,7 @@ StatisticsTextEdit::StatisticsTextEdit(QWidget *parent) noexcept
 {
     setFixedWidth(100);
     setMinimumHeight(90);
+    setReadOnly(true);
 }
 
 void StatisticsTextEdit::setStatistics(const QVector<double> &statistics)
@@ -13,7 +14,6 @@ void StatisticsTextEdit::setStatistics(const QVector<double> &statistics)
     setHtml(_PATTERN_.arg(
         QString::number(statistics[0]),
         QString::number(statistics[1]),
-        QString::number(statistics[2]),
-        QString::number(statistics[3])
+        QString::number(statistics[2])
     ));
 }
