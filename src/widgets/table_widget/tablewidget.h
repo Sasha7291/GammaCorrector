@@ -35,7 +35,7 @@ public:
     template<utils::Number T>
     void setValues(const QVector<QVector<T>> &values) noexcept;
     template<utils::Number T>
-    [[nodiscard]] QVector<QVector<T>> values() const noexcept;
+    [[nodiscard]] QVector<QVector<T>> values(int from) const noexcept;
 
 signals:
     void columnChecked(int index, bool checked);
@@ -103,12 +103,12 @@ void TableWidget::setValues(const QVector<QVector<T>> &values) noexcept
 }
 
 template<utils::Number T>
-QVector<QVector<T>> TableWidget::values() const noexcept
+QVector<QVector<T>> TableWidget::values(int from) const noexcept
 {
     QVector<QVector<T>> result;
     result.reserve(rowCount());
 
-    for (auto i = 0; i < rowCount(); ++i)
+    for (auto i = from; i < rowCount(); ++i)
     {
         QVector<T> line;
         line.reserve(columnCount());

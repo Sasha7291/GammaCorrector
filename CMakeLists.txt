@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 set(SRC_ROOT ${PROJECT_SOURCE_DIR}/src)
+set(ICONS_ROOT  icons)
 file(GLOB SOURCES ${SRC_ROOT}/*.cpp ${SRC_ROOT}/*/*.cpp ${SRC_ROOT}/*/*/*.cpp)
 file(GLOB HEADERS ${SRC_ROOT}/*.h ${SRC_ROOT}/*/*.h ${SRC_ROOT}/*/*/*.h)
 
@@ -20,6 +21,14 @@ qt_add_executable(${PROJECT_NAME}
   ${SOURCES}
   ${HEADERS}
 )
+qt_add_resources(${PROJECT_NAME} "icons"
+  PREFIX "/"
+  FILES
+    ${ICONS_ROOT}/exit.png
+    ${ICONS_ROOT}/open.png
+    ${ICONS_ROOT}/save.png
+)
+target_compile_definitions(${PROJECT_NAME} PRIVATE QT)
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${SRC_ROOT}
   ${SRC_ROOT}/monitor_plot
@@ -36,15 +45,11 @@ set_property(TARGET ${QWT_LIBRARY_NAME} PROPERTY IMPORTED_IMPLIB ${QWT_ROOT}/lib
 target_include_directories(${PROJECT_NAME} PRIVATE ${QWT_ROOT}/include)
 
 add_subdirectory(lib/csv/)
-add_subdirectory(lib/dynamic_matrix/)
 add_subdirectory(lib/lsa/)
-add_subdirectory(lib/psr/)
 target_link_libraries(${PROJECT_NAME} PRIVATE
   Qt6::Widgets
   csv
-  dynamic_matrix
   lsa
-  psr
   qwt
 )
 

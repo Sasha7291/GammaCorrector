@@ -3,7 +3,7 @@
 PolynomialOrderComboBox::PolynomialOrderComboBox(QWidget *parent) noexcept
     : QComboBox{parent}
 {
-    for (auto i = 2ull; i < 6ull; ++i)
+    for (auto i = 2ull; i < 8ull; ++i)
         addItem(QString::number(i), QVariant::fromValue(i + 1));
 }
 

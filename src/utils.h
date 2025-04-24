@@ -57,4 +57,16 @@ template<std::ranges::random_access_range T, std::ranges::random_access_range K>
     }
 }
 
+template<Number T>
+[[nodiscard]] QVector<QVector<T>> transposeVector(const QVector<QVector<T>> &data)
+{
+    QVector<QVector<T>> result(data[0].size(), QVector<T>(data.size()));
+
+    for (int i = 0; i < data.size(); ++i)
+        for (int j = 0; j < data[0].size(); ++j)
+            result[j][i] = data[i][j];
+
+    return result;
+}
+
 }

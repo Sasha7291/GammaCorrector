@@ -2,53 +2,11 @@
 
 #include "mainwindow.h"
 
-#include <QFormLayout>
-#include <QGridLayout>
-#include <QSplitter>
-
 
 MainWindow_Ui::MainWindow_Ui(MainWindow *parent) noexcept
-    : tableWidget{new TableWidget{QStringList() << "U, V" << "I, A", parent}}
-    , loadPushButton{new QPushButton{"Load", parent}}
-    , savePushButton{new QPushButton{"Save", parent}}
-    , approximatePushButton{new QPushButton{"Approximate", parent}}
-    , polynomialOrderComboBox{new PolynomialOrderComboBox{parent}}
-    , equationTextEdit{new EquationTextEdit{parent}}
-    , statisticsTextEdit{new StatisticsTextEdit{parent}}
-    , plot{new Plot{parent}}
-    , filterCheckBox{new QCheckBox{"Filtering", parent}}
-    , filterWidthComboBox{new FilterWidthComboBox{parent}}
+    : tabWidget{new TabWidget{parent}}
+    , menuBar{new MenuBar{parent}}
 {
-    auto widget = new QWidget{parent};
-    auto mainLayout = new QGridLayout{widget};
-
-    auto layout_1 = new QHBoxLayout;
-    layout_1->addWidget(loadPushButton);
-    layout_1->addWidget(savePushButton);
-    layout_1->addStretch();
-
-    auto layout_2 = new QFormLayout;
-    layout_2->addRow("Order: ", polynomialOrderComboBox);
-
-    auto layout_3 = new QFormLayout;
-    layout_3->addRow("Width: ", filterWidthComboBox);
-
-    auto layout_4 = new QVBoxLayout;
-    layout_4->addLayout(layout_2);
-    layout_4->addWidget(approximatePushButton);
-    layout_4->addWidget(new QSplitter{});
-    layout_4->addLayout(layout_3);
-    layout_4->addWidget(filterCheckBox);
-    layout_4->addWidget(statisticsTextEdit);
-
-    mainLayout->addWidget(tableWidget, 0, 0);
-    mainLayout->addWidget(equationTextEdit, 1, 0);
-    mainLayout->addLayout(layout_4, 0, 1, 2, 1);
-    mainLayout->addLayout(layout_1, 2, 0, 1, 2);
-    mainLayout->addWidget(plot, 0, 2, 3, 1);
-
-    widget->setLayout(mainLayout);
-    parent->setCentralWidget(widget);
-
-    tableWidget->setFixedWidth(equationTextEdit->width());
+    parent->setMenuBar(menuBar);
+    parent->setCentralWidget(tabWidget);
 }
