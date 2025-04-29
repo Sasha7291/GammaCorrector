@@ -7,7 +7,7 @@
 
 
 ApproximateTabWidget_Ui::ApproximateTabWidget_Ui(ApproximateTabWidget *parent) noexcept
-    : tableWidget{new TableWidget{QStringList() << "U, V" << "I, A", parent}}
+    : tableWidget{new TableWidget{parent}}
     , savePushButton{new QPushButton{"Save", parent}}
     , approximatePushButton{new QPushButton{"Approximate", parent}}
     , polynomialOrderComboBox{new PolynomialOrderComboBox{parent}}

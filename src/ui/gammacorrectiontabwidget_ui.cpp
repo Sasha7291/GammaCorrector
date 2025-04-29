@@ -8,7 +8,7 @@
 
 GammaCorrectionTabWidget_Ui::GammaCorrectionTabWidget_Ui(GammaCorrectionTabWidget *parent) noexcept
     : plot{new Plot{parent}}
-    , tableWidget{new TableWidget{QStringList() << "Q", parent}}
+    , tableWidget{new TableWidget{parent}}
     , gammaCorrectionDoubleSpinBox{new GammaCorrectionOrderDoubleSpinBox{parent}}
 {
     auto mainLayout = new QHBoxLayout{parent};

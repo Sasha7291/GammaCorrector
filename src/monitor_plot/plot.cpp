@@ -77,6 +77,8 @@ void Plot::setData(
 
     setAxisAutoScale(yLeft, true);
     setAxisAutoScale(xBottom, true);
+
+    replot();
 }
 
 void Plot::hideCurve(int index)

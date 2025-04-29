@@ -1,21 +1,70 @@
 #include "tablewidget.h"
 
 #include "checkboxheaderview.h"
+#include "doublespinboxdelegate.h"
+#include "tablewidgetitem.h"
+
+#include <QAction>
+#include <QContextMenuEvent>
+#include <QMenu>
 
 
-TableWidget::TableWidget(const QStringList &headers, QWidget *parent) noexcept
+TableWidget::TableWidget(QWidget *parent) noexcept
     : QTableWidget{parent}
+    , header_{new CheckBoxHeaderView{Qt::Horizontal, this}}
 {
-    setColumnCount(headers.size());
     setSortingEnabled(false);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionMode(QAbstractItemView::SingleSelection);
     verticalHeader()->hide();
 
-    auto header = new CheckBoxHeaderView{Qt::Horizontal, this};
-    setHorizontalHeader(header);
-    setHorizontalHeaderLabels(headers);
-    header->setSectionResizeMode(QHeaderView::Stretch);
+    setHorizontalHeader(header_);
+    header_->setSectionResizeMode(QHeaderView::Stretch);
 
-    connect(header, &CheckBoxHeaderView::sectionChecked, this, &TableWidget::columnChecked);
+    setItemDelegate(new DoubleSpinBoxDelegate{this});
+
+    connect(header_, &CheckBoxHeaderView::sectionChecked, this, &TableWidget::columnChecked);
+}
+
+void TableWidget::addRow(int row) noexcept
+{
+    insertRow(row);
+    setRow(row, QList<double>(columnCount(), 0.0));
+    emit dataUpdated();
+}
+
+QList<double> TableWidget::column(int index, const QPair<int, int> &rowRange) const noexcept
+{
+#ifdef QT_DEBUG
+    Q_ASSERT(rowRange.first >= 0);
+    Q_ASSERT(rowRange.first < rowRange.second);
+    Q_ASSERT(rowRange.second < rowCount());
+#endif
+
+    QList<double> result;
+    result.reserve(rowRange.second - rowRange.first);
+
+    for (auto i = rowRange.first; i <= rowRange.second; ++i)
+        result << item(i, index)->data(Qt::DisplayRole).toString().toDouble();
+
+    return result;
+}
+
+QList<QList<double>> TableWidget::columns(const QPair<int, int> &columnRange, const QPair<int, int> &rowRange) const noexcept
+{
+#ifdef QT_DEBUG
+    Q_ASSERT(columnRange.first >= 0);
+    Q_ASSERT(columnRange.first < columnRange.second);
+    Q_ASSERT(columnRange.second < columnCount());
+#endif
+
+    QList<QList<double>> result;
+    result.reserve(columnRange.second - columnRange.first);
+
+    for (auto i = columnRange.first; i <= columnRange.second; ++i)
+        result.push_back(column(i, rowRange));
+
+    return result;
 }
 
 void TableWidget::hideRowFrom(int from) noexcept
@@ -36,39 +85,119 @@ void TableWidget::hideRowTo(int to) noexcept
 
 bool TableWidget::isColumnCheckable(int number) const noexcept
 {
-    return static_cast<CheckBoxHeaderView *>(horizontalHeader())->isCheckable(number);
+    return header_->isCheckable(number);
 }
 
 bool TableWidget::isColumnChecked(int number) const noexcept
 {
-    return static_cast<CheckBoxHeaderView *>(horizontalHeader())->isChecked(number);
+    return header_->isChecked(number);
+}
+
+QList<double> TableWidget::row(int index, const QPair<int, int> &columnRange) const noexcept
+{
+#ifdef QT_DEBUG
+    Q_ASSERT(columnRange.first >= 0);
+    Q_ASSERT(columnRange.first < columnRange.second);
+    Q_ASSERT(columnRange.second < columnCount());
+#endif
+
+    QList<double> result;
+    result.reserve(columnRange.second - columnRange.first);
+
+    for (auto i = columnRange.first; i <= columnRange.second; ++i)
+        result << item(index, i)->data(Qt::DisplayRole).toString().toDouble();
+
+    return result;
+}
+
+QList<QList<double> > TableWidget::rows(const QPair<int, int> &columnRange, const QPair<int, int> &rowRange) const noexcept
+{
+#ifdef QT_DEBUG
+    Q_ASSERT(rowRange.first >= 0);
+    Q_ASSERT(rowRange.first < rowRange.second);
+    Q_ASSERT(rowRange.second < rowCount());
+#endif
+
+    QList<QList<double>> result;
+    result.reserve(rowRange.second - rowRange.first);
+
+    for (auto i = rowRange.first; i <= rowRange.second; ++i)
+        result.push_back(row(i, columnRange));
+
+    return result;
+}
+
+void TableWidget::setColumn(int index, const QList<double> &values, const QString &name, int fromRow)
+{
+#ifdef QT_DEBUG
+    Q_ASSERT(fromRow >= 0);
+#endif
+
+    if (columnCount() <= index)
+        setColumnCount(index + 1);
+    if (!name.isEmpty())
+        setHorizontalHeaderItem(index, new QTableWidgetItem{name});
+
+    for (auto i = 0; i < values.size(); ++i)
+        setItem(fromRow + i, index, new TableWidgetItem{values[i]});
 }
 
 void TableWidget::setColumnCheckable(int column, bool checkable)
 {
-    static_cast<CheckBoxHeaderView *>(horizontalHeader())->setCheckable(column, checkable);
+    header_->setCheckable(column, checkable);
 }
 
 void TableWidget::setColumnChecked(int column, bool checked)
 {
-    static_cast<CheckBoxHeaderView *>(horizontalHeader())->setChecked(column, checked);
+    header_->setChecked(column, checked);
 }
 
-void TableWidget::setRowEnabled(int row, bool checked) noexcept
+void TableWidget::setColumns(const QList<QList<double>> &values, const QStringList &headers, const QList<int> &from) noexcept
 {
-    for (auto i = 0ll; i < columnCount(); ++i)
-        item(row, i)->setFlags(checked ? item(row, i)->flags() | Qt::ItemIsEnabled : item(row, i)->flags() & ~Qt::ItemIsEnabled);
+    clear();
+    setColumnCount(values.size());
+    setRowCount(values[0].size());
+    setHorizontalHeaderLabels(headers);
+
+    for (auto i = 0ll; i < values.size(); ++i)
+        setColumn(i, values[i], headers.isEmpty() ? QString{} : headers[i], from.isEmpty() ? 0 : from[i]);
 }
 
-void TableWidget::setRowEnabledFrom(int from, bool checked) noexcept
+void TableWidget::setRow(int index, const QList<double> &values, int fromColumn)
 {
-    for (auto i = 0; i < from; ++i)
-        setRowEnabled(i, !checked);
-    for (auto i = from; i < rowCount(); ++i)
-        setRowEnabled(i, checked);
+#ifdef QT_DEBUG
+    Q_ASSERT(fromColumn >= 0);
+#endif
+
+    if (rowCount() <= index)
+        setRowCount(index + 1);
+
+    for (auto i = 0; i < values.size(); ++i)
+        setItem(index, fromColumn + i, new TableWidgetItem{values[i]});
 }
 
-void TableWidget::setRowEnabledTo(int to, bool checked) noexcept
+
+void TableWidget::setRows(const QList<QList<double>> &values, const QList<int> &from) noexcept
 {
-    setRowEnabled(to, !checked);
+    clear();
+    setRowCount(values.size());
+    setColumnCount(values[0].size());
+
+    for (auto i = 0ll; i < values.size(); ++i)
+        setRow(i, values[i], from.isEmpty() ? 0 : from[i]);
+}
+
+void TableWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    if (event->reason() == QContextMenuEvent::Mouse)
+    {
+        QMenu menu{this};
+
+        menu.addAction("Insert row before", this, [this]() -> void { addRow(currentRow()); });
+        menu.addAction("Insert row after", this, [this]() -> void { addRow(currentRow() + 1); });
+        menu.addSeparator();
+        menu.addAction("Remove row", this, [this]() -> void { removeRow(currentRow()); emit dataUpdated(); });
+
+        menu.exec(mapToGlobal(event->pos()));
+    }
 }

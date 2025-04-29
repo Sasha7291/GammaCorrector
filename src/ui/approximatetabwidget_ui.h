@@ -5,7 +5,7 @@
 #include "plot.h"
 #include "polynomialordercombobox.h"
 #include "statisticstextedit.h"
-// #include "tablewidget.h"
+#include "tablewidget.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -28,7 +28,7 @@ public:
     ApproximateTabWidget_Ui &operator=(const ApproximateTabWidget_Ui &) = delete;
     ApproximateTabWidget_Ui &operator=(ApproximateTabWidget_Ui &&) = delete;
 
-    // QPointer<TableWidget> tableWidget;
+    QPointer<TableWidget> tableWidget;
     QPointer<QPushButton> savePushButton;
     QPointer<QPushButton> approximatePushButton;
     QPointer<PolynomialOrderComboBox> polynomialOrderComboBox;

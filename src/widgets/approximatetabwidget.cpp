@@ -6,7 +6,6 @@
 #include "csv_reader.hpp"
 #include "csv_writer.hpp"
 #include "lsa_approximator.h"
-#include "psr_curvesproximity.h"
 #include "psr_gaussfilter.h"
 #include "psr_medianfilter.h"
 #include "psr_pearsoncoefficient.h"
@@ -21,19 +20,15 @@ ApproximateTabWidget::ApproximateTabWidget(QTabWidget *parent) noexcept
     , index_{0}
 {
     connect(ui->approximatePushButton, &QPushButton::clicked, this, &ApproximateTabWidget::approximate);
-    connect(ui->tableWidget, &TableWidget::columnChecked, this, [this](int index, bool checked) -> void {
-        (checked)
-            ? ui->plot->showCurve(index - 1)
-            : ui->plot->hideCurve(index - 1);
-    });
+    connect(ui->tableWidget, &TableWidget::dataUpdated, this, &ApproximateTabWidget::approximate);
 }
 
 ApproximateTabWidget::~ApproximateTabWidget() noexcept {}
 
 void ApproximateTabWidget::approximate()
 {
-    const auto x = ui->tableWidget->column<double>(0);
-    auto y = ui->tableWidget->column<double>(1);
+    const auto x = ui->tableWidget->column(0, {0, ui->tableWidget->rowCount() - 1});
+    auto y = ui->tableWidget->column(1, {0, ui->tableWidget->rowCount() - 1});
 
     if (!x.empty() && !y.empty())
     {
@@ -54,14 +49,9 @@ void ApproximateTabWidget::approximate()
             const auto [keys, values] = psr::Polynomial<double>{slicedX.front(), slicedX.back()}(1024, coeffs);
 
             ui->tableWidget->hideRowTo(index_);
-            ui->tableWidget->setColumnValues(2, values, "I', A", index_);
-            ui->tableWidget->setColumnCheckable(2, true);
-            ui->tableWidget->setColumnChecked(2, true);
             ui->statisticsTextEdit->setStatistics({
                 psr::PearsonCoefficient<double>{}(slicedX, slicedY),
-                psr::SpearmanCoefficient<double>{}(slicedX, slicedY),
-                psr::CurvesProximity<double>{}(slicedX, slicedY, values.last(x.size() - index_)),
-                psr::CurvesProximity<double>{}(slicedY, values.last(x.size() - index_))
+                psr::SpearmanCoefficient<double>{}(slicedX, slicedY)
             });
             ui->equationTextEdit->setEquation("V", "I", coeffs);
             ui->plot->setData({ x, keys }, { y, values }, { "I, A", "I', A" });
@@ -82,16 +72,14 @@ void ApproximateTabWidget::loadData()
         auto [minX, maxX] = std::ranges::minmax(data[0]);
         data[0] = psr::Rationing<double>{{minX, maxX}, {0, 1023}}(data[0]);
         auto [minY, maxY] = std::ranges::minmax(data[1]);
-        data[1] = psr::Rationing<double>{{minY, maxY}, {0, 255}}(data[1]);
-        data = utils::transposeVector(data);
+        data[1] = psr::Rationing<double>{{minY, maxY}, {0, 1023}}(data[1]);
 
-        ui->tableWidget->setValues(data);
+        ui->tableWidget->setColumns(data, {"U, V", "I, A"});
         ui->tableWidget->setColumnCheckable(0, false);
-        ui->tableWidget->setColumnCheckable(1, true);
-        ui->tableWidget->setColumnChecked(1, true);
+        ui->tableWidget->setColumnCheckable(1, false);
         ui->plot->setData(
-            { ui->tableWidget->column<double>(0) },
-            { ui->tableWidget->column<double>(1) },
+            { ui->tableWidget->column(0, {0, ui->tableWidget->rowCount() - 1}) },
+            { ui->tableWidget->column(1, {0, ui->tableWidget->rowCount() - 1}) },
             { "I, A" }
         );
     }
@@ -105,7 +93,7 @@ void ApproximateTabWidget::saveData()
 {
     try
     {
-        csv::Writer{}(utils::getSaveFileName().toStdString(), ui->tableWidget->values<double>(index_));
+        csv::Writer{}(utils::getSaveFileName().toStdString(), ui->tableWidget->columns({0, ui->tableWidget->columnCount() - 1}, {index_, ui->tableWidget->rowCount() - 1}));
     }
     catch (const csv::Exception &exception)
     {
