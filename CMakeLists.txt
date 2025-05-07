@@ -16,24 +16,32 @@ set(ICONS_ROOT  icons)
 file(GLOB SOURCES ${SRC_ROOT}/*.cpp ${SRC_ROOT}/*/*.cpp ${SRC_ROOT}/*/*/*.cpp)
 file(GLOB HEADERS ${SRC_ROOT}/*.h ${SRC_ROOT}/*/*.h ${SRC_ROOT}/*/*/*.h)
 
+set(RESOURCES ${PROJECT_SOURCE_DIR}/resources.rc)
 qt_add_executable(${PROJECT_NAME}
   MANUAL_FINALIZATION
   ${SOURCES}
   ${HEADERS}
+  ${RESOURCES}
 )
 qt_add_resources(${PROJECT_NAME} "icons"
   PREFIX "/"
   FILES
+    ${ICONS_ROOT}/close_table.png
     ${ICONS_ROOT}/exit.png
+    ${ICONS_ROOT}/main_icon.png
     ${ICONS_ROOT}/open.png
+    ${ICONS_ROOT}/Q.png
     ${ICONS_ROOT}/save.png
+    ${ICONS_ROOT}/settings.png
+    ${ICONS_ROOT}/table.png
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE QT)
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${SRC_ROOT}
-  ${SRC_ROOT}/monitor_plot
   ${SRC_ROOT}/ui
   ${SRC_ROOT}/widgets
+  ${SRC_ROOT}/widgets/mdi_area
+  ${SRC_ROOT}/widgets/plot
   ${SRC_ROOT}/widgets/table_widget
 )
 

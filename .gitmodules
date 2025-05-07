@@ -1,4 +1,4 @@
-[submodule "lib/Csv"]
+[submodule "lib/csv"]
 	path = lib/Csv
 	url = https://github.com/Sasha7291/Csv.git
 [submodule "lib/lsa"]

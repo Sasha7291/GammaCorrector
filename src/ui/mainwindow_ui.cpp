@@ -2,11 +2,20 @@
 
 #include "mainwindow.h"
 
+#include <QApplication>
+#include <QHBoxLayout>
+
 
 MainWindow_Ui::MainWindow_Ui(MainWindow *parent) noexcept
-    : tabWidget{new TabWidget{parent}}
+    : mdiArea{MdiArea::create(parent)}
     , menuBar{new MenuBar{parent}}
+    , toolBar{new ToolBar{parent}}
+    , statusBar{new StatusBar{parent}}
+    , dockWidget{new DockWidget{parent}}
 {
     parent->setMenuBar(menuBar);
-    parent->setCentralWidget(tabWidget);
+    parent->addToolBar(toolBar);
+    parent->setCentralWidget(mdiArea);
+    parent->setStatusBar(statusBar);
+    parent->addDockWidget(Qt::BottomDockWidgetArea, dockWidget);
 }

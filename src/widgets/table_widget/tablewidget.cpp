@@ -158,6 +158,8 @@ void TableWidget::setColumns(const QList<QList<double>> &values, const QStringLi
     setColumnCount(values.size());
     setRowCount(values[0].size());
     setHorizontalHeaderLabels(headers);
+    header_->setSectionResizeMode(QHeaderView::Stretch);
+    setMinimumWidth(values.size() * 100);
 
     for (auto i = 0ll; i < values.size(); ++i)
         setColumn(i, values[i], headers.isEmpty() ? QString{} : headers[i], from.isEmpty() ? 0 : from[i]);
@@ -171,17 +173,19 @@ void TableWidget::setRow(int index, const QList<double> &values, int fromColumn)
 
     if (rowCount() <= index)
         setRowCount(index + 1);
+    setColumnCount(values.size());
 
     for (auto i = 0; i < values.size(); ++i)
         setItem(index, fromColumn + i, new TableWidgetItem{values[i]});
 }
-
 
 void TableWidget::setRows(const QList<QList<double>> &values, const QList<int> &from) noexcept
 {
     clear();
     setRowCount(values.size());
     setColumnCount(values[0].size());
+    header_->setSectionResizeMode(QHeaderView::Stretch);
+    setMinimumWidth(values.size() * 100);
 
     for (auto i = 0ll; i < values.size(); ++i)
         setRow(i, values[i], from.isEmpty() ? 0 : from[i]);

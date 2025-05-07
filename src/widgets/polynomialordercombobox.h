@@ -14,4 +14,7 @@ public:
     [[nodiscard]] std::size_t currentPolynomialOrder() const noexcept;
     void setCurrentPolynomialOrder(std::size_t order) noexcept;
 
+signals:
+    void currentOrderChanged(std::size_t order);
+
 };

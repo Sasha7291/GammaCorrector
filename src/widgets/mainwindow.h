@@ -13,6 +13,10 @@ public:
     explicit MainWindow(QWidget *parent = nullptr) noexcept;
     ~MainWindow() noexcept;
 
+private slots:
+    void loadData();
+    void saveData();
+
 private:
     std::unique_ptr<MainWindow_Ui> ui;
 

@@ -5,6 +5,10 @@ PolynomialOrderComboBox::PolynomialOrderComboBox(QWidget *parent) noexcept
 {
     for (auto i = 2ull; i < 8ull; ++i)
         addItem(QString::number(i), QVariant::fromValue(i + 1));
+
+    connect(this, &QComboBox::currentIndexChanged, [this]([[maybe_unused]] int index) -> void {
+        emit currentOrderChanged(currentPolynomialOrder());
+    });
 }
 
 std::size_t PolynomialOrderComboBox::currentPolynomialOrder() const noexcept
