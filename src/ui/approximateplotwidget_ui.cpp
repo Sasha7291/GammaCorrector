@@ -81,7 +81,8 @@ void ApproximatePlotWidget_Ui::showSettingsWindow() const
     parent_->connect(
         parentSubWindow, &QMdiSubWindow::windowStateChanged,
         parent_, [this](Qt::WindowStates oldState, Qt::WindowStates newState) -> void {
-            if (newState & Qt::WindowMaximized || oldState & Qt::WindowMaximized)
+            if (newState & Qt::WindowMaximized && !(oldState & Qt::WindowMaximized)
+                || !(newState & Qt::WindowMaximized) && oldState & Qt::WindowMaximized)
                 showSettingsWindow();
         }
     );

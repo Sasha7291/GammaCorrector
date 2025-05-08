@@ -19,6 +19,7 @@ public:
     [[nodiscard]] int offsetIndex() const;
     [[nodiscard]] QPointF offsetPosition() const;
     [[nodiscard]] int polynomialOrder() const;
+    void setOffsetPosition(const QPointF &pos);
     void setOffsetPlotData(const QList<double> &keys, const QList<double> &values);
     void setTemperature(double temperature);
     [[nodiscard]] double temperature() const;

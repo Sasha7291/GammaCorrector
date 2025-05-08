@@ -37,7 +37,7 @@ private:
 
     void approximateData(std::size_t order, int offset, const QPointF &pos);
     void gammaData(double degree);
-    void normalizeData(const QPair<double, double> &xRange, const QPair<double, double> &yRange);
+    void normalizeData();
 
     std::unique_ptr<ApproximatePlotWidget_Ui> ui;
     QList<double> coeffs_;

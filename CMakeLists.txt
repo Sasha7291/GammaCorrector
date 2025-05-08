@@ -13,8 +13,8 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 set(SRC_ROOT ${PROJECT_SOURCE_DIR}/src)
 set(ICONS_ROOT  icons)
-file(GLOB SOURCES ${SRC_ROOT}/*.cpp ${SRC_ROOT}/*/*.cpp ${SRC_ROOT}/*/*/*.cpp)
-file(GLOB HEADERS ${SRC_ROOT}/*.h ${SRC_ROOT}/*/*.h ${SRC_ROOT}/*/*/*.h)
+file(GLOB SOURCES ${SRC_ROOT}/*.cpp ${SRC_ROOT}/*/*.cpp ${SRC_ROOT}/*/*/*.cpp ${SRC_ROOT}/*/*/*/*.cpp)
+file(GLOB HEADERS ${SRC_ROOT}/*.h ${SRC_ROOT}/*/*.h ${SRC_ROOT}/*/*/*.h ${SRC_ROOT}/*/*/*/*.h)
 
 set(RESOURCES ${PROJECT_SOURCE_DIR}/resources.rc)
 qt_add_executable(${PROJECT_NAME}
@@ -38,9 +38,12 @@ qt_add_resources(${PROJECT_NAME} "icons"
 target_compile_definitions(${PROJECT_NAME} PRIVATE QT)
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${SRC_ROOT}
+  ${SRC_ROOT}/data
   ${SRC_ROOT}/ui
   ${SRC_ROOT}/widgets
-  ${SRC_ROOT}/widgets/mdi_area
+  ${SRC_ROOT}/widgets/approximated_plot_window
+  ${SRC_ROOT}/widgets/main_window
+  ${SRC_ROOT}/widgets/main_window/mdi_area
   ${SRC_ROOT}/widgets/plot
   ${SRC_ROOT}/widgets/table_widget
 )

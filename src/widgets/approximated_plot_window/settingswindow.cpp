@@ -58,6 +58,11 @@ int SettingsWindow::polynomialOrder() const
     return ui->polynomialOrderComboBox->currentPolynomialOrder();
 }
 
+void SettingsWindow::setOffsetPosition(const QPointF &pos)
+{
+    ui->offsetPlot->setMarkerPosition(pos);
+}
+
 void SettingsWindow::setOffsetPlotData(const QList<double> &keys, const QList<double> &values)
 {
     ui->offsetPlot->setData(0, keys, values, "", true);

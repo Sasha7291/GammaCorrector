@@ -8,4 +8,7 @@ ToolBar::ToolBar(QWidget *parent)
     setAllowedAreas(Qt::TopToolBarArea | Qt::LeftToolBarArea);
     setFloatable(false);
     addAction(QIcon{":/icons/Q.png"}, "Calculate Q");
+
+    for (auto &action : actions())
+        action->setEnabled(false);
 }

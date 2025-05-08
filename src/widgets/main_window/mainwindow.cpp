@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
         {
             if (auto plotWidget = qobject_cast<ApproximatePlotWidget*>(subWindow->widget()))
             {
+                ui->toolBar->actions()[ToolBar::CalculateQ]->setEnabled(true);
                 ui->statusBar->setCoefficients(plotWidget->coeffs());
 
                 disconnect(plotWidget, &QObject::destroyed, ui->statusBar, nullptr);
@@ -35,6 +36,10 @@ MainWindow::MainWindow(QWidget *parent) noexcept
                 connect(plotWidget, &QObject::destroyed, ui->statusBar, &StatusBar::clear);
                 connect(plotWidget, &ApproximatePlotWidget::coeffsChanged, ui->statusBar, &StatusBar::setCoefficients);
                 connect(plotWidget, &ApproximatePlotWidget::qCalculated, ui->dockWidget, &DockWidget::setQ);
+            }
+            else
+            {
+                ui->toolBar->actions()[ToolBar::CalculateQ]->setEnabled(false);
             }
         }
     });
