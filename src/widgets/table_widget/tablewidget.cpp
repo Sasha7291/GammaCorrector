@@ -207,7 +207,6 @@ void TableWidget::setRow(int index, const QList<double> &values, int fromColumn)
     if (rowCount() <= index)
         setRowCount(index + 1);
     setColumnCount(values.size());
-    header_->setSectionResizeMode(QHeaderView::Stretch);
 
     for (auto i = 0; i < values.size(); ++i)
         setItem(index, fromColumn + i, new TableWidgetItem{values[i]});

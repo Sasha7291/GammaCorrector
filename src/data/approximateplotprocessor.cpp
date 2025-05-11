@@ -34,14 +34,15 @@ QPair<QList<double>, QList<double>> ApproximatePlotProcessor::gammaData(const QP
 
 QPair<QList<double>, QList<double>> ApproximatePlotProcessor::normalizedData(
     const QList<double> &keys,
-    const QList<double> &values,
-    const QPair<double, double> &keysRange,
-    const QPair<double, double> &valuesRange
+    const QList<double> &values
 ) const
 {
+    const auto [minX, maxX] = std::ranges::minmax(keys);
+    const auto [minY, maxY] = std::ranges::minmax(values);
+
     return {
-        psr::Rationing<double>{ keysRange, { 0.0, 1023.0 } }(keys),
-        psr::Rationing<double>{ valuesRange, { 0.0, 1023.0 } }(values)
+        psr::Rationing<double>{ { minX, maxX }, { 0.0, 1023.0 } }(keys),
+        psr::Rationing<double>{ { minY, maxY }, { 0.0, 1023.0 } }(values)
     };
 }
 

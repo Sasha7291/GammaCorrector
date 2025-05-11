@@ -16,29 +16,12 @@ ApproximatePlotSettingsWidget::ApproximatePlotSettingsWidget(QWidget *parent)
     connect(ui->gammaCorrectionOrderDoubleSpinBox, &GammaCorrectionOrderDoubleSpinBox::valueChanged, this, &ApproximatePlotSettingsWidget::gammaCorrectionDegreeChanged);
     connect(ui->polynomialOrderComboBox, &PolynomialOrderComboBox::currentOrderChanged, this, &ApproximatePlotSettingsWidget::polynomialOrderChanged);
     connect(ui->offsetPlot, &Plot::markerMoved, this, &ApproximatePlotSettingsWidget::offsetChanged);
-    connect(ui->minCurrentDoubleSpinBox, &QDoubleSpinBox::valueChanged, this, [this](double value) -> void {
-        emit currentRangeChanged({ value, ui->maxCurrentDoubleSpinBox->value() });
-    });
-    connect(ui->maxCurrentDoubleSpinBox, &QDoubleSpinBox::valueChanged, this, [this](double value) -> void {
-        emit currentRangeChanged({ ui->minCurrentDoubleSpinBox->value(), value });
-    });
-    connect(ui->minVoltageDoubleSpinBox, &QDoubleSpinBox::valueChanged, this, [this](double value) -> void {
-        emit voltageRangeChanged({ value, ui->maxVoltageDoubleSpinBox->value() });
-    });
-    connect(ui->maxVoltageDoubleSpinBox, &QDoubleSpinBox::valueChanged, this, [this](double value) -> void {
-        emit voltageRangeChanged({ ui->minVoltageDoubleSpinBox->value(), value });
-    });
     connect(&ui->temperatureButtons, &QButtonGroup::idClicked, ui->temperatureDoubleSpinBox, [this](int index) -> void {
         ui->temperatureDoubleSpinBox->setScale(static_cast<TemperatureTransformer::Scale>(index));
     });
 }
 
 ApproximatePlotSettingsWidget::~ApproximatePlotSettingsWidget() {}
-
-QPair<double, double> ApproximatePlotSettingsWidget::currentRange() const
-{
-    return { ui->minCurrentDoubleSpinBox->value(), ui->maxCurrentDoubleSpinBox->value() };
-}
 
 double ApproximatePlotSettingsWidget::gammaCorrectionOrder() const
 {
@@ -78,9 +61,4 @@ void ApproximatePlotSettingsWidget::setTemperature(double temperature)
 double ApproximatePlotSettingsWidget::temperature() const
 {
     return ui->temperatureDoubleSpinBox->currentTemparetureInKelvins();
-}
-
-QPair<double, double> ApproximatePlotSettingsWidget::voltageRange() const
-{
-    return { ui->minVoltageDoubleSpinBox->value(), ui->maxVoltageDoubleSpinBox->value() };
 }

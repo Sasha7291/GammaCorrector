@@ -20,11 +20,11 @@ public:
 
 public slots:
     void createTableWidget(SubWindowWidget *subWindowWidget);
+    void removeTableWidget(SubWindowWidget *subWindowWidget);
     void setQ(SubWindowWidget *subWindowWidget, const QList<double> &Q);
 
 private:
     void createMainTableWidget();
-    void setQ(TableWidget *tableWidget, const QList<double> &Q);
 
     QHash<SubWindowWidget *, QPointer<TableWidget>> tableWidgets_;
     QPointer<TableWidget> mainTableWidget_;

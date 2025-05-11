@@ -20,8 +20,12 @@ MainWindow::MainWindow(QWidget *parent) noexcept
     connect(ui->menuBar->fileMenu->actions()[FileMenu::Exit], &QAction::triggered, qApp, &QApplication::exit);
     connect(ui->toolBar->actions()[ToolBar::CalculateQ], &QAction::triggered, this, [this]() -> void {
         if (MdiArea::instance()->activeSubWindow() != nullptr)
+        {
             if (auto plotWidget = qobject_cast<ApproximatePlotWidget *>(MdiArea::instance()->activeSubWindow()->widget()))
                 plotWidget->calculateQ();
+            else if (auto plotWidget = qobject_cast<TemperaturePlotWidget *>(MdiArea::instance()->activeSubWindow()->widget()))
+                plotWidget->calculateQ();
+        }
     });
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, [this](QMdiSubWindow *subWindow) -> void {
         if (subWindow != nullptr)
@@ -75,10 +79,20 @@ void MainWindow::loadData()
                 for (const auto &gamma : gammas)
                 {
                     auto plotWidget = new TemperaturePlotWidget{this};
+                    QList<QList<double>> tempData(data.size() - 1, QList<double>{});
+
+                    for (int i = 0; i < data[0].size(); i++)
+                        if (data[0][i] == gamma)
+                            for (int j = 1; j < data.size(); ++j)
+                                tempData[j - 1] << data[j][i];
 
                     MdiArea::openSubWindow(plotWidget, "γ = " + QString::number(gamma) + ": " + title.first(title.lastIndexOf(".")));
-                    plotWidget->setData(data);
+                    plotWidget->setData(tempData);
+                    ui->dockWidget->createTableWidget(plotWidget);
 
+                    connect(plotWidget, &QObject::destroyed, this, [this, plotWidget]() -> void {
+                        ui->dockWidget->removeTableWidget(plotWidget);
+                    });
                     connect(plotWidget, &TemperaturePlotWidget::qCalculated, this, [this, plotWidget](const QList<double> &Q) -> void {
                         ui->dockWidget->setQ(plotWidget, Q);
                     });

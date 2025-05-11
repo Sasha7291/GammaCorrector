@@ -35,7 +35,7 @@ void ApproximatePlotWidget::setData(const QList<QList<double>> &data)
 
     ui->plot->setAxisTitles({ "U, dsc", "I, dsc" });
 
-    normalizeData(ui->settingsWindow->voltageRange(), ui->settingsWindow->currentRange());
+    normalizeData();
     approximateData(ui->settingsWindow->polynomialOrder(), ui->settingsWindow->offsetIndex(), ui->settingsWindow->offsetPosition());
     gammaData(ui->settingsWindow->gammaCorrectionOrder());
 
@@ -63,7 +63,7 @@ void ApproximatePlotWidget::calculateQ()
     QList<double> result(3);
     result[0] = ui->settingsWindow->gammaCorrectionOrder();
     result[1] = ui->settingsWindow->temperature();
-    result[2] = ui->settingsWindow->offsetPosition().x();
+    result[2] = std::ranges::max(ui->originalData->column(0, { 0 , ui->originalData->rowCount() - 1 }));
 
     const auto gammaDataY = ui->plot->data(Gamma, 256)[1];
     const auto approximatedData = ui->plot->data(Approximated, 1024);
@@ -109,13 +109,11 @@ void ApproximatePlotWidget::gammaData(double degree)
     ui->plot->setData(Gamma, gammaX, gammaY, "I_gamma");
 }
 
-void ApproximatePlotWidget::normalizeData(const QPair<double, double> &voltageRange, const QPair<double, double> &currentRange)
+void ApproximatePlotWidget::normalizeData()
 {
     const auto [normalizedDataX, normalizedDataY] = ApproximatePlotProcessor{}.normalizedData(
         ui->originalData->column(0, { 0, ui->originalData->rowCount() - 1 }),
-        ui->originalData->column(1, { 0, ui->originalData->rowCount() - 1 }),
-        voltageRange,
-        currentRange
+        ui->originalData->column(1, { 0, ui->originalData->rowCount() - 1 })
     );
 
     ui->settingsWindow->setOffsetPlotData(normalizedDataX, normalizedDataY);

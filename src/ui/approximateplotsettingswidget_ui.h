@@ -24,10 +24,6 @@ public:
     QPointer<OffsetPlot> offsetPlot;
     QPointer<PolynomialOrderComboBox> polynomialOrderComboBox;
     QPointer<TemperatureDoubleSpinBox> temperatureDoubleSpinBox;
-    QPointer<QDoubleSpinBox> minVoltageDoubleSpinBox;
-    QPointer<QDoubleSpinBox> maxVoltageDoubleSpinBox;
-    QPointer<QDoubleSpinBox> minCurrentDoubleSpinBox;
-    QPointer<QDoubleSpinBox> maxCurrentDoubleSpinBox;
     QButtonGroup temperatureButtons;
 
 };

@@ -46,5 +46,6 @@ private:
 
     std::unique_ptr<TemperaturePlotWidget_Ui> ui;
     QList<QList<double>> coeffs_;
+    QList<QList<double>> data_;
 
 };

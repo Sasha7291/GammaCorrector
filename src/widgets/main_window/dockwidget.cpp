@@ -30,16 +30,29 @@ void DockWidget::createTableWidget(SubWindowWidget *subWindowWidget)
     tableWidgets_[subWindowWidget] = new TableWidget{this};
     tabWidget_->addTab(
         tableWidgets_[subWindowWidget],
-        QIcon{"/:icons/main_icon.png"},
+        QIcon{":/icons/main_icon.png"},
         subWindowWidget->windowTitle()
     );
+}
+
+void DockWidget::removeTableWidget(SubWindowWidget *subWindowWidget)
+{
+    for (int i = 0; i < tabWidget_->count(); ++i)
+        if (tabWidget_->widget(i) == tableWidgets_[subWindowWidget])
+        {
+            tabWidget_->removeTab(i);
+            tableWidgets_.remove(subWindowWidget);
+            break;
+        }
 }
 
 void DockWidget::setQ(SubWindowWidget *subWindowWidget, const QList<double> &Q)
 {
     if (tableWidgets_.contains(subWindowWidget))
     {
-        setQ(tableWidgets_[subWindowWidget], Q);
+        tableWidgets_[subWindowWidget]->setRow(tableWidgets_[subWindowWidget]->rowCount(), Q);
+        tableWidgets_[subWindowWidget]->sortByColumn(0, Qt::AscendingOrder);
+        tableWidgets_[subWindowWidget]->setColumnColor(0, Qt::darkGreen);
         tableWidgets_[subWindowWidget]->setHorizontalHeaderLabels({
             "T, K",
             "Q1, dsc",
@@ -54,11 +67,14 @@ void DockWidget::setQ(SubWindowWidget *subWindowWidget, const QList<double> &Q)
     }
     else
     {
-        setQ(mainTableWidget_, Q);
+        mainTableWidget_->setRow(mainTableWidget_->rowCount(), Q);
+        mainTableWidget_->multiSort(0, 1);
+        mainTableWidget_->setColumnColor(0, Qt::darkGreen);
+        mainTableWidget_->setColumnColor(1, Qt::darkYellow);
         mainTableWidget_->setHorizontalHeaderLabels({
             "γ",
             "T, K",
-            "V_offset, dsc",
+            "V_max, dsc",
             "Q1, dsc",
             "Q2, dsc",
             "Q3, dsc",
@@ -74,12 +90,4 @@ void DockWidget::setQ(SubWindowWidget *subWindowWidget, const QList<double> &Q)
 void DockWidget::createMainTableWidget()
 {
     tabWidget_->addTab(mainTableWidget_, QIcon{":/icons/main_icon.png"}, "Main");
-}
-
-void DockWidget::setQ(TableWidget *tableWidget, const QList<double> &Q)
-{
-    tableWidget->setRow(tableWidget->rowCount(), Q);
-    tableWidget->multiSort(0, 1);
-    tableWidget->setColumnColor(0, Qt::darkGreen);
-    tableWidget->setColumnColor(1, Qt::darkYellow);
 }

@@ -5,9 +5,16 @@
 TemperaturePlotSettingsWidget::TemperaturePlotSettingsWidget(QWidget *parent)
     : QWidget{parent}
     , ui{std::make_unique<TemperaturePlotSettingsWidget_Ui>(this)}
-{}
+{
+    connect(ui->polynomialOrderComboBox, &PolynomialOrderComboBox::currentOrderChanged, this, &TemperaturePlotSettingsWidget::polynomialOrderChanged);
+}
 
 TemperaturePlotSettingsWidget::~TemperaturePlotSettingsWidget() {}
+
+std::size_t TemperaturePlotSettingsWidget::polynomialOrder() const
+{
+    return ui->polynomialOrderComboBox->currentPolynomialOrder();
+}
 
 void TemperaturePlotSettingsWidget::setTemperatureRange(const QPair<double, double> &range)
 {

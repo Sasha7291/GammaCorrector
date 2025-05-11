@@ -23,9 +23,7 @@ public:
     [[nodiscard]] QPair<QList<double>, QList<double>> gammaData(const QPair<double, double> &range, double degree) const;
     [[nodiscard]] QPair<QList<double>, QList<double>> normalizedData(
         const QList<double> &keys,
-        const QList<double> &values,
-        const QPair<double, double> &keysRange,
-        const QPair<double, double> &valuesRange
+        const QList<double> &values
     ) const;
     [[nodiscard]] QPair<QList<double>, QList<double>> qData(
         const QList<double> &gamma,
