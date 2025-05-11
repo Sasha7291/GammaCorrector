@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS DataVisualization Graphs Widgets)
 
 set(SRC_ROOT ${PROJECT_SOURCE_DIR}/src)
 set(ICONS_ROOT  icons)
@@ -41,11 +41,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${SRC_ROOT}/data
   ${SRC_ROOT}/ui
   ${SRC_ROOT}/widgets
-  ${SRC_ROOT}/widgets/approximated_plot_window
+  ${SRC_ROOT}/widgets/approximate_plot_window
   ${SRC_ROOT}/widgets/main_window
   ${SRC_ROOT}/widgets/main_window/mdi_area
   ${SRC_ROOT}/widgets/plot
+  ${SRC_ROOT}/widgets/plot_3d
   ${SRC_ROOT}/widgets/table_widget
+  ${SRC_ROOT}/widgets/temperature_plot_window
 )
 
 set(QWT_LIBRARY_NAME qwt)
@@ -58,6 +60,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${QWT_ROOT}/include)
 add_subdirectory(lib/csv/)
 add_subdirectory(lib/lsa/)
 target_link_libraries(${PROJECT_NAME} PRIVATE
+  Qt6::DataVisualization
+  Qt6::Graphs
   Qt6::Widgets
   csv
   lsa

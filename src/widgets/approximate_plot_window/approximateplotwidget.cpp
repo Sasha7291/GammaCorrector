@@ -35,20 +35,20 @@ void ApproximatePlotWidget::setData(const QList<QList<double>> &data)
 
     ui->plot->setAxisTitles({ "U, dsc", "I, dsc" });
 
-    normalizeData();
+    normalizeData(ui->settingsWindow->voltageRange(), ui->settingsWindow->currentRange());
     approximateData(ui->settingsWindow->polynomialOrder(), ui->settingsWindow->offsetIndex(), ui->settingsWindow->offsetPosition());
     gammaData(ui->settingsWindow->gammaCorrectionOrder());
 
     ui->plot->showMarker();
 
-    connect(ui->settingsWindow, &SettingsWindow::gammaCorrectionDegreeChanged, this, &ApproximatePlotWidget::gammaData);
-    connect(ui->settingsWindow, &SettingsWindow::polynomialOrderChanged, this, [this](std::size_t order) -> void {
+    connect(ui->settingsWindow, &ApproximatePlotSettingsWidget::gammaCorrectionDegreeChanged, this, &ApproximatePlotWidget::gammaData);
+    connect(ui->settingsWindow, &ApproximatePlotSettingsWidget::polynomialOrderChanged, this, [this](std::size_t order) -> void {
         approximateData(order, ui->settingsWindow->offsetIndex(), ui->settingsWindow->offsetPosition());
     });
-    connect(ui->settingsWindow, &SettingsWindow::offsetChanged, this, [this](int offset, const QPointF &pos) -> void {
+    connect(ui->settingsWindow, &ApproximatePlotSettingsWidget::offsetChanged, this, [this](int offset, const QPointF &pos) -> void {
         approximateData(ui->settingsWindow->polynomialOrder(), offset, pos);
     });
-    connect(ui->settingsWindow, &SettingsWindow::offsetChanged, this, [this]([[maybe_unused]] int index, const QPointF &pos) -> void {
+    connect(ui->settingsWindow, &ApproximatePlotSettingsWidget::offsetChanged, this, [this]([[maybe_unused]] int index, const QPointF &pos) -> void {
         if (ui->plot->currentMarkerPosition().second != pos)
             ui->plot->setMarkerPosition(pos);
     });
@@ -109,11 +109,13 @@ void ApproximatePlotWidget::gammaData(double degree)
     ui->plot->setData(Gamma, gammaX, gammaY, "I_gamma");
 }
 
-void ApproximatePlotWidget::normalizeData()
+void ApproximatePlotWidget::normalizeData(const QPair<double, double> &voltageRange, const QPair<double, double> &currentRange)
 {
     const auto [normalizedDataX, normalizedDataY] = ApproximatePlotProcessor{}.normalizedData(
         ui->originalData->column(0, { 0, ui->originalData->rowCount() - 1 }),
-        ui->originalData->column(1, { 0, ui->originalData->rowCount() - 1 })
+        ui->originalData->column(1, { 0, ui->originalData->rowCount() - 1 }),
+        voltageRange,
+        currentRange
     );
 
     ui->settingsWindow->setOffsetPlotData(normalizedDataX, normalizedDataY);

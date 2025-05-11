@@ -1,10 +1,12 @@
 #pragma once
 
-#include "tablewidget.h"
-
 #include <QDockWidget>
 #include <QPointer>
 
+
+class SubWindowWidget;
+class TableWidget;
+class QTabWidget;
 
 class DockWidget : public QDockWidget
 {
@@ -14,9 +16,18 @@ public:
     explicit DockWidget(QWidget *parent = nullptr);
     ~DockWidget() = default;
 
-    void setQ(const QList<double> &Q);
+    [[nodiscard]] QList<QList<double>> data() const;
+
+public slots:
+    void createTableWidget(SubWindowWidget *subWindowWidget);
+    void setQ(SubWindowWidget *subWindowWidget, const QList<double> &Q);
 
 private:
-    QPointer<TableWidget> tableWidget_;
+    void createMainTableWidget();
+    void setQ(TableWidget *tableWidget, const QList<double> &Q);
+
+    QHash<SubWindowWidget *, QPointer<TableWidget>> tableWidgets_;
+    QPointer<TableWidget> mainTableWidget_;
+    QPointer<QTabWidget> tabWidget_;
 
 };

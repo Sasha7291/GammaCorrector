@@ -1,6 +1,5 @@
 #pragma once
 
-#include "filterwidthcombobox.h"
 #include "gammacorrectionorderdoublespinbox.h"
 #include "offsetplot.h"
 #include "polynomialordercombobox.h"
@@ -12,21 +11,23 @@
 #include <QRadioButton>
 
 
-class SettingsWindow;
+class ApproximatePlotSettingsWidget;
 
-class SettingsWindow_Ui
+class ApproximatePlotSettingsWidget_Ui
 {
 
 public:
-    explicit SettingsWindow_Ui(SettingsWindow *parent);
-    ~SettingsWindow_Ui() = default;
+    explicit ApproximatePlotSettingsWidget_Ui(ApproximatePlotSettingsWidget *parent);
+    ~ApproximatePlotSettingsWidget_Ui() = default;
 
-    QPointer<QCheckBox> filterCheckBox;
-    QPointer<FilterWidthComboBox> filterWidthComboBox;
     QPointer<GammaCorrectionOrderDoubleSpinBox> gammaCorrectionOrderDoubleSpinBox;
     QPointer<OffsetPlot> offsetPlot;
     QPointer<PolynomialOrderComboBox> polynomialOrderComboBox;
     QPointer<TemperatureDoubleSpinBox> temperatureDoubleSpinBox;
+    QPointer<QDoubleSpinBox> minVoltageDoubleSpinBox;
+    QPointer<QDoubleSpinBox> maxVoltageDoubleSpinBox;
+    QPointer<QDoubleSpinBox> minCurrentDoubleSpinBox;
+    QPointer<QDoubleSpinBox> maxCurrentDoubleSpinBox;
     QButtonGroup temperatureButtons;
 
 };

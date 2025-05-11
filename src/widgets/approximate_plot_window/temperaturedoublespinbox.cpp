@@ -4,10 +4,10 @@ TemperatureDoubleSpinBox::TemperatureDoubleSpinBox(QWidget *parent)
     : QDoubleSpinBox{parent}
     , suffixes_{" °K", " °C", " °F"}
 {
-    setRange(-60.0, 50.0);
     setDecimals(2);
     setSingleStep(0.01);
-    setSuffix(" °K");
+    setScale(TemperatureTransformer::Celsius);
+    setRange(-45.0, 70.0);
 }
 
 TemperatureTransformer::Scale TemperatureDoubleSpinBox::currentScale() const

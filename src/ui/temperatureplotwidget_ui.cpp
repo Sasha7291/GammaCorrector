@@ -1,43 +1,27 @@
-#include "approximateplotwidget_ui.h"
+#include "temperatureplotwidget_ui.h"
 
-#include "approximateplotwidget.h"
 #include "aspectratiocontainerwidget.h"
 #include "mdiarea.h"
+#include "temperatureplotwidget.h"
 
 #include <QHBoxLayout>
 #include <QMenu>
 
 
-ApproximatePlotWidget_Ui::ApproximatePlotWidget_Ui(ApproximatePlotWidget *parent)
-    : parent_{parent}
-    , plot{new Plot{parent}}
-    , originalData{new TableWidget{parent}}
-    , settingsWindow{new ApproximatePlotSettingsWidget{parent}}
+TemperaturePlotWidget_Ui::TemperaturePlotWidget_Ui(TemperaturePlotWidget *parent)
+    : plot{new Plot{parent}}
+    , parent_{parent}
+    , settingsWindow{new TemperaturePlotSettingsWidget{parent}}
 {
     auto layout = new QHBoxLayout{parent};
     layout->addWidget(new AspectRatioContainerWidget{plot, 4.0f / 3.0f, 400, parent}, 1);
     parent->setLayout(layout);
-
-    originalData->hide();
 }
 
-void ApproximatePlotWidget_Ui::showContextMenu(const QPoint &pos) const
+void TemperaturePlotWidget_Ui::showContextMenu(const QPoint &pos) const
 {
     QMenu menu{parent_};
 
-    if (!originalData->isVisible())
-        menu.addAction(QIcon{":/icons/table.png"}, "Show data", parent_, [this]() -> void {
-            parent_->layout()->addWidget(originalData);
-            originalData->show();
-            parent_->setSize(parent_->width() + originalData->width(), parent_->height());
-        });
-    else
-        menu.addAction(QIcon{":/icons/close_table.png"}, "Hide data", parent_, [this]() -> void {
-            originalData->hide();
-            parent_->layout()->removeWidget(originalData);
-            parent_->setSize(parent_->width() - originalData->width(), parent_->height());
-        });
-    menu.addSeparator();
     menu.addAction(QIcon{":/icons/settings.png"}, "Settings", parent_, [this]() -> void {
         showSettingsWindow();
     });
@@ -45,7 +29,7 @@ void ApproximatePlotWidget_Ui::showContextMenu(const QPoint &pos) const
     menu.exec(parent_->mapToGlobal(pos));
 }
 
-void ApproximatePlotWidget_Ui::showSettingsWindow() const
+void TemperaturePlotWidget_Ui::showSettingsWindow() const
 {
     auto parentSubWindow = qobject_cast<QMdiSubWindow *>(parent_->parentWidget());
     auto settingsSubWindow = qobject_cast<MdiSubWindow *>(settingsWindow->parentWidget());
@@ -87,4 +71,3 @@ void ApproximatePlotWidget_Ui::showSettingsWindow() const
         }
     );
 }
-

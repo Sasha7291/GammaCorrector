@@ -1,7 +1,7 @@
 #pragma once
 
 #include "plot.h"
-#include "settingswindow.h"
+#include "approximateplotsettingswidget.h"
 #include "tablewidget.h"
 
 #include <QPointer>
@@ -20,7 +20,7 @@ public:
 
     QPointer<Plot> plot;
     QPointer<TableWidget> originalData;
-    QPointer<SettingsWindow> settingsWindow;
+    QPointer<ApproximatePlotSettingsWidget> settingsWindow;
 
 private:
     void showSettingsWindow() const;

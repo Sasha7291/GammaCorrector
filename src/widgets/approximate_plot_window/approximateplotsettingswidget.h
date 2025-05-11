@@ -3,19 +3,18 @@
 #include <QWidget>
 
 
-class SettingsWindow_Ui;
+class ApproximatePlotSettingsWidget_Ui;
 
-class SettingsWindow : public QWidget
+class ApproximatePlotSettingsWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-    ~SettingsWindow();
+    explicit ApproximatePlotSettingsWidget(QWidget *parent = nullptr);
+    ~ApproximatePlotSettingsWidget();
 
-    [[nodiscard]] int filterWidth() const;
+    [[nodiscard]] QPair<double, double> currentRange() const;
     [[nodiscard]] double gammaCorrectionOrder() const;
-    [[nodiscard]] bool isFilter() const;
     [[nodiscard]] int offsetIndex() const;
     [[nodiscard]] QPointF offsetPosition() const;
     [[nodiscard]] int polynomialOrder() const;
@@ -23,15 +22,16 @@ public:
     void setOffsetPlotData(const QList<double> &keys, const QList<double> &values);
     void setTemperature(double temperature);
     [[nodiscard]] double temperature() const;
+    [[nodiscard]] QPair<double, double> voltageRange() const;
 
 signals:
-    void filterChecked(bool checked);
-    void filterWidthChanged(int width);
+    void currentRangeChanged(const QPair<double, double> &range);
     void gammaCorrectionDegreeChanged(double degree);
-    void polynomialOrderChanged(std::size_t order);
     void offsetChanged(int index, const QPointF &pos);
+    void polynomialOrderChanged(std::size_t order);
+    void voltageRangeChanged(const QPair<double, double> &range);
 
 private:
-    std::unique_ptr<SettingsWindow_Ui> ui;
+    std::unique_ptr<ApproximatePlotSettingsWidget_Ui> ui;
 
 };

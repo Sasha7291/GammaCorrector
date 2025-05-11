@@ -14,8 +14,8 @@ TableWidget::TableWidget(QWidget *parent) noexcept
     , header_{new CheckBoxHeaderView{Qt::Horizontal, this}}
 {
     setSortingEnabled(false);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::SingleSelection);
+    setSelectionBehavior(QAbstractItemView::SelectItems);
+    setSelectionMode(QAbstractItemView::MultiSelection);
     verticalHeader()->hide();
 
     setHorizontalHeader(header_);
@@ -26,10 +26,10 @@ TableWidget::TableWidget(QWidget *parent) noexcept
     connect(header_, &CheckBoxHeaderView::sectionChecked, this, &TableWidget::columnChecked);
 }
 
-void TableWidget::addRow(int row) noexcept
+void TableWidget::addRow(int index) noexcept
 {
-    insertRow(row);
-    setRow(row, QList<double>(columnCount(), 0.0));
+    insertRow(index);
+    setRow(index, QList<double>(columnCount(), 0.0));
     emit dataUpdated();
 }
 
@@ -83,14 +83,38 @@ void TableWidget::hideRowTo(int to) noexcept
         showRow(i);
 }
 
-bool TableWidget::isColumnCheckable(int number) const noexcept
+bool TableWidget::isColumnCheckable(int index) const noexcept
 {
-    return header_->isCheckable(number);
+    return header_->isCheckable(index);
 }
 
-bool TableWidget::isColumnChecked(int number) const noexcept
+bool TableWidget::isColumnChecked(int index) const noexcept
 {
-    return header_->isChecked(number);
+    return header_->isChecked(index);
+}
+
+void TableWidget::multiSort(
+    int primaryColumn,
+    int secondaryColumn,
+    Qt::SortOrder primaryOrder,
+    Qt::SortOrder secondaryOrder
+)
+{
+    auto data = rows({ 0, columnCount() }, { 0, rowCount() });
+    auto compare = [primaryColumn, secondaryColumn, primaryOrder, secondaryOrder](const QVector<double> &a, const QVector<double> &b)
+    {
+        if (a[primaryColumn] != b[primaryColumn])
+            return (primaryOrder == Qt::AscendingOrder)
+                ? (a[primaryColumn] < b[primaryColumn])
+                : (a[primaryColumn] > b[primaryColumn]);
+
+        return secondaryOrder == Qt::AscendingOrder
+            ? (a[secondaryColumn] < b[secondaryColumn])
+            : (a[secondaryColumn] > b[secondaryColumn]);
+    };
+
+    std::sort(data.begin(), data.end(), compare);
+    setRows(data);
 }
 
 QList<double> TableWidget::row(int index, const QPair<int, int> &columnRange) const noexcept
@@ -98,30 +122,30 @@ QList<double> TableWidget::row(int index, const QPair<int, int> &columnRange) co
 #ifdef QT_DEBUG
     Q_ASSERT(columnRange.first >= 0);
     Q_ASSERT(columnRange.first < columnRange.second);
-    Q_ASSERT(columnRange.second < columnCount());
+    Q_ASSERT(columnRange.second <= columnCount());
 #endif
 
     QList<double> result;
     result.reserve(columnRange.second - columnRange.first);
 
-    for (auto i = columnRange.first; i <= columnRange.second; ++i)
+    for (auto i = columnRange.first; i < columnRange.second; ++i)
         result << item(index, i)->data(Qt::DisplayRole).toString().toDouble();
 
     return result;
 }
 
-QList<QList<double> > TableWidget::rows(const QPair<int, int> &columnRange, const QPair<int, int> &rowRange) const noexcept
+QList<QList<double>> TableWidget::rows(const QPair<int, int> &columnRange, const QPair<int, int> &rowRange) const noexcept
 {
 #ifdef QT_DEBUG
     Q_ASSERT(rowRange.first >= 0);
     Q_ASSERT(rowRange.first < rowRange.second);
-    Q_ASSERT(rowRange.second < rowCount());
+    Q_ASSERT(rowRange.second <= rowCount());
 #endif
 
     QList<QList<double>> result;
     result.reserve(rowRange.second - rowRange.first);
 
-    for (auto i = rowRange.first; i <= rowRange.second; ++i)
+    for (auto i = rowRange.first; i < rowRange.second; ++i)
         result.push_back(row(i, columnRange));
 
     return result;
@@ -142,14 +166,23 @@ void TableWidget::setColumn(int index, const QList<double> &values, const QStrin
         setItem(fromRow + i, index, new TableWidgetItem{values[i]});
 }
 
-void TableWidget::setColumnCheckable(int column, bool checkable)
+void TableWidget::setColumnCheckable(int index, bool checkable)
 {
-    header_->setCheckable(column, checkable);
+    header_->setCheckable(index, checkable);
 }
 
-void TableWidget::setColumnChecked(int column, bool checked)
+void TableWidget::setColumnChecked(int index, bool checked)
 {
-    header_->setChecked(column, checked);
+    header_->setChecked(index, checked);
+}
+
+void TableWidget::setColumnColor(int index, const QColor &color)
+{
+    QColor tempColor = color;
+    tempColor.setAlphaF(0.5);
+
+    for (int i = 0; i < rowCount(); ++i)
+        item(i, index)->setBackground(QBrush{tempColor, Qt::BrushStyle::SolidPattern});
 }
 
 void TableWidget::setColumns(const QList<QList<double>> &values, const QStringList &headers, const QList<int> &from) noexcept
@@ -174,9 +207,19 @@ void TableWidget::setRow(int index, const QList<double> &values, int fromColumn)
     if (rowCount() <= index)
         setRowCount(index + 1);
     setColumnCount(values.size());
+    header_->setSectionResizeMode(QHeaderView::Stretch);
 
     for (auto i = 0; i < values.size(); ++i)
         setItem(index, fromColumn + i, new TableWidgetItem{values[i]});
+}
+
+void TableWidget::setRowColor(int index, const QColor &color)
+{
+    QColor tempColor = color;
+    tempColor.setAlphaF(0.5);
+
+    for (int i = 0; i < columnCount(); ++i)
+        item(index, i)->setBackground(QBrush{tempColor, Qt::SolidPattern});
 }
 
 void TableWidget::setRows(const QList<QList<double>> &values, const QList<int> &from) noexcept

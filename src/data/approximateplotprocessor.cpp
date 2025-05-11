@@ -32,14 +32,16 @@ QPair<QList<double>, QList<double>> ApproximatePlotProcessor::gammaData(const QP
     return psr::PowerFunction<double>{range.first, range.second}(1024, 1023.0 / std::pow(range.second, degree), degree);
 }
 
-QPair<QList<double>, QList<double>> ApproximatePlotProcessor::normalizedData(const QList<double> &keys, const QList<double> &values) const
+QPair<QList<double>, QList<double>> ApproximatePlotProcessor::normalizedData(
+    const QList<double> &keys,
+    const QList<double> &values,
+    const QPair<double, double> &keysRange,
+    const QPair<double, double> &valuesRange
+) const
 {
-    const auto [minX, maxX] = std::ranges::minmax(keys);
-    const auto [minY, maxY] = std::ranges::minmax(values);
-
     return {
-        psr::Rationing<double>{{ minX, maxX }, { 0.0, 1023.0 }}(keys),
-        psr::Rationing<double>{{ minY, maxY }, { 0.0, 1023.0 }}(values)
+        psr::Rationing<double>{ keysRange, { 0.0, 1023.0 } }(keys),
+        psr::Rationing<double>{ valuesRange, { 0.0, 1023.0 } }(values)
     };
 }
 
