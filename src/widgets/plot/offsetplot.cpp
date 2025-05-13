@@ -4,7 +4,7 @@
 
 
 OffsetPlot::OffsetPlot(QWidget *parent)
-    : LogarithmicPlot{LogarithmicPlot::Y, parent}
+    : LogarithmicPlot{LogarithmicPlot::Both, parent}
 {
     insertLegend(nullptr);
     setFixedSize(233, 200);

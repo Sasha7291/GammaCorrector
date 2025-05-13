@@ -9,6 +9,7 @@
 #include "csv_writer.hpp"
 
 #include <QApplication>
+#include <QDir>
 
 
 MainWindow::MainWindow(QWidget *parent) noexcept
@@ -57,7 +58,7 @@ void MainWindow::loadData()
         if (!path.isEmpty())
         {
             auto title = path.split("/").back();
-            auto data = csv::Reader<double>{csv::Columns}(path.toStdString());
+            auto data = csv::Reader<double>{csv::Columns}(QDir{path}.filesystemAbsolutePath());
 
             if (data.size() == 2)
             {
@@ -114,7 +115,10 @@ void MainWindow::saveData()
 {
     try
     {
-        csv::Writer<double>{csv::Rows}(utils::getSaveFileName().toStdString(), ui->dockWidget->data());
+        csv::Writer<double>{csv::Rows}(
+            QDir{utils::getSaveFileName()}.filesystemAbsolutePath(),
+            ui->dockWidget->data()
+        );
     }
     catch (const csv::Exception &exception)
     {
