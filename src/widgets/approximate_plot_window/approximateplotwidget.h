@@ -19,6 +19,7 @@ public:
 public slots:
     void calculateQ();
     void findOffset();
+    void substractLine();
 
 signals:
     void coeffsChanged(const QList<double> &coeffs);
@@ -43,5 +44,6 @@ private:
     std::unique_ptr<ApproximatePlotWidget_Ui> ui;
     QList<double> coeffs_;
     std::size_t currentPeakIndex_;
+    bool dataSubstracted_;
 
 };

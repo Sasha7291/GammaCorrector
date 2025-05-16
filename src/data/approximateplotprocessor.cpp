@@ -3,7 +3,9 @@
 #include "lsa_approximator.h"
 #include "psr_findpeaks.h"
 #include "psr_gaussfilter.h"
+#include "psr_line.h"
 #include "psr_medianfilter.h"
+#include "psr_pearsoncoefficient.h"
 #include "psr_polynomial.h"
 #include "psr_powerfunction.h"
 #include "psr_rationing.h"
@@ -63,6 +65,34 @@ QList<std::size_t> ApproximatePlotProcessor::peakData(const QList<double> &value
     result.reserve(peaks.size());
     for (std::size_t i = 0; i < peaks.size(); ++i)
         result.push_back(peaks[i].position);
+
+    return result;
+}
+
+QList<double> ApproximatePlotProcessor::substractLineData(const QList<double> &keys, const QList<double> &values) const
+{
+    double maxPc = 0.0;
+    std::size_t maxPcIndex = 0;
+
+    for (std::size_t i = 0; i < values.size(); ++i)
+    {
+        auto currentPc = psr::PearsonCoefficient<double>{}(
+            { keys.cbegin(), keys.cbegin() + i },
+            { values.cbegin(), values.cbegin() + i }
+        );
+        if (maxPc < currentPc)
+        {
+            maxPc = currentPc;
+            maxPcIndex = i;
+        }
+    }
+
+    const auto coeffs = lsa::Approximator{}.linear(
+        { keys.cbegin(), keys.cbegin() + maxPcIndex },
+        { values.cbegin(), values.cbegin() + maxPcIndex }
+    );
+    auto [_, result] = psr::Line<double>{ keys.front(), keys.back() }(keys.size(), coeffs[1], coeffs[0]);
+    std::ranges::transform(values, result, result.begin(), std::minus<>());
 
     return result;
 }

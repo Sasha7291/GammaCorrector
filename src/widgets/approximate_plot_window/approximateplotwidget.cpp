@@ -14,6 +14,7 @@ ApproximatePlotWidget::ApproximatePlotWidget(QWidget *parent)
     , ui{std::make_unique<ApproximatePlotWidget_Ui>(this)}
     , coeffs_{}
     , currentPeakIndex_{0}
+    , dataSubstracted_{false}
 {
     if (parent != nullptr)
         parent->installEventFilter(this);
@@ -89,10 +90,25 @@ void ApproximatePlotWidget::findOffset()
 {
     const auto data = ui->plot->data(Normalized, 1024);
     const auto peaks = ApproximatePlotProcessor{}.peakData(data[1]);
-    // qDebug() << peaks.size();
 
     ui->plot->setMarkerPosition(QPointF{data[0][peaks[currentPeakIndex_]], data[1][peaks[currentPeakIndex_]]});
     currentPeakIndex_ == peaks.size() - 1 ? currentPeakIndex_ = 0 : ++currentPeakIndex_;
+}
+
+void ApproximatePlotWidget::substractLine()
+{
+    if (!dataSubstracted_)
+    {
+        const auto data = ui->plot->data(Normalized, 1024);
+        const auto substractedY = ApproximatePlotProcessor{}.substractLineData(data[0], data[1]);
+        const auto normalizedData = ApproximatePlotProcessor{}.normalizedData(data[0], substractedY);
+
+        ui->plot->setData(Normalized, normalizedData.first, normalizedData.second, "I", true);
+        ui->settingsWindow->setOffsetPlotData(normalizedData.first, normalizedData.second);
+        ui->plot->setMarkerPosition(QPointF{});
+
+        dataSubstracted_ = true;
+    }
 }
 
 void ApproximatePlotWidget::contextMenuEvent(QContextMenuEvent *event)

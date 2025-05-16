@@ -11,7 +11,8 @@ public:
     enum Actions
     {
         CalculateQ,
-        FindOffset
+        FindOffset,
+        SubstractLine
     };
 
     explicit ToolBar(QWidget *parent = nullptr);

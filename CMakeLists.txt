@@ -34,6 +34,7 @@ qt_add_resources(${PROJECT_NAME} "icons"
     ${ICONS_ROOT}/Q.png
     ${ICONS_ROOT}/save.png
     ${ICONS_ROOT}/settings.png
+    ${ICONS_ROOT}/substract_line.png
     ${ICONS_ROOT}/table.png
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE QT)

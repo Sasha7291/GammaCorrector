@@ -35,6 +35,13 @@ MainWindow::MainWindow(QWidget *parent) noexcept
                 plotWidget->findOffset();
         }
     });
+    connect(ui->toolBar->actions()[ToolBar::SubstractLine], &QAction::triggered, this, [this]() -> void {
+        if (MdiArea::instance()->activeSubWindow() != nullptr)
+        {
+            if (auto plotWidget = qobject_cast<ApproximatePlotWidget *>(MdiArea::instance()->activeSubWindow()->widget()))
+                plotWidget->substractLine();
+        }
+    });
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, [this](QMdiSubWindow *subWindow) -> void {
         if (subWindow != nullptr)
         {
@@ -42,17 +49,20 @@ MainWindow::MainWindow(QWidget *parent) noexcept
             {
                 ui->toolBar->actions()[ToolBar::CalculateQ]->setEnabled(true);
                 ui->toolBar->actions()[ToolBar::FindOffset]->setEnabled(true);
+                ui->toolBar->actions()[ToolBar::SubstractLine]->setEnabled(true);
                 ui->statusBar->setCoefficients(plotWidget->coeffs());
             }
             else if (auto plotWidget = qobject_cast<TemperaturePlotWidget *>(subWindow->widget()))
             {
                 ui->toolBar->actions()[ToolBar::CalculateQ]->setEnabled(true);
                 ui->toolBar->actions()[ToolBar::FindOffset]->setEnabled(false);
+                ui->toolBar->actions()[ToolBar::SubstractLine]->setEnabled(false);
             }
             else
             {
                 ui->toolBar->actions()[ToolBar::CalculateQ]->setEnabled(false);
                 ui->toolBar->actions()[ToolBar::FindOffset]->setEnabled(false);
+                ui->toolBar->actions()[ToolBar::SubstractLine]->setEnabled(false);
             }
         }
     });
