@@ -1,6 +1,9 @@
 #include "approximateplotprocessor.h"
 
 #include "lsa_approximator.h"
+#include "psr_findpeaks.h"
+#include "psr_gaussfilter.h"
+#include "psr_medianfilter.h"
 #include "psr_polynomial.h"
 #include "psr_powerfunction.h"
 #include "psr_rationing.h"
@@ -44,6 +47,24 @@ QPair<QList<double>, QList<double>> ApproximatePlotProcessor::normalizedData(
         psr::Rationing<double>{ { minX, maxX }, { 0.0, 1023.0 } }(keys),
         psr::Rationing<double>{ { minY, maxY }, { 0.0, 1023.0 } }(values)
     };
+}
+
+QList<std::size_t> ApproximatePlotProcessor::peakData(const QList<double> &values) const
+{
+    QList<double> tempValues(values.size() - 2);
+
+    for (std::size_t i = 1; i < tempValues.size(); ++i)
+        tempValues[i] = std::log(values[i + 1] / values[i]);
+
+    // 19 - эмпирически подобранное значение
+    const auto peaks = psr::PeakFinder<double>{}(psr::GaussFilter<double>{}(psr::MedianFilter<double>{}(tempValues, 19), 19));
+
+    QList<std::size_t> result;
+    result.reserve(peaks.size());
+    for (std::size_t i = 0; i < peaks.size(); ++i)
+        result.push_back(peaks[i].position);
+
+    return result;
 }
 
 QPair<QList<double>, QList<double>> ApproximatePlotProcessor::qData(

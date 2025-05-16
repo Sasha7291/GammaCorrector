@@ -1,6 +1,7 @@
 #pragma once
 
-#include <qglobal.h>
+#include <QList>
+
 
 class ApproximatePlotProcessor
 {
@@ -25,6 +26,7 @@ public:
         const QList<double> &keys,
         const QList<double> &values
     ) const;
+    [[nodiscard]] QList<std::size_t> peakData(const QList<double> &values) const;
     [[nodiscard]] QPair<QList<double>, QList<double>> qData(
         const QList<double> &gamma,
         const QList<double> &keys,

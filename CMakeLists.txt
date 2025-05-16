@@ -28,6 +28,7 @@ qt_add_resources(${PROJECT_NAME} "icons"
   FILES
     ${ICONS_ROOT}/close_table.png
     ${ICONS_ROOT}/exit.png
+    ${ICONS_ROOT}/find_offset.png
     ${ICONS_ROOT}/main_icon.png
     ${ICONS_ROOT}/open.png
     ${ICONS_ROOT}/Q.png

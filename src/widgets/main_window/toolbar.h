@@ -10,7 +10,8 @@ class ToolBar : public QToolBar
 public:
     enum Actions
     {
-        CalculateQ
+        CalculateQ,
+        FindOffset
     };
 
     explicit ToolBar(QWidget *parent = nullptr);

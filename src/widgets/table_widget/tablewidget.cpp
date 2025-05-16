@@ -179,7 +179,7 @@ void TableWidget::setColumnChecked(int index, bool checked)
 void TableWidget::setColumnColor(int index, const QColor &color)
 {
     QColor tempColor = color;
-    tempColor.setAlphaF(0.5);
+    tempColor.setAlphaF(0.2);
 
     for (int i = 0; i < rowCount(); ++i)
         item(i, index)->setBackground(QBrush{tempColor, Qt::BrushStyle::SolidPattern});

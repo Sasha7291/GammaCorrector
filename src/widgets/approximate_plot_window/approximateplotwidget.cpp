@@ -6,8 +6,6 @@
 #include <QContextMenuEvent>
 #include <QMdiSubWindow>
 
-#include "psr_gaussfilter.h"
-#include "psr_medianfilter.h"
 #include "psr_powerfunction.h"
 
 
@@ -15,6 +13,7 @@ ApproximatePlotWidget::ApproximatePlotWidget(QWidget *parent)
     : SubWindowWidget{parent}
     , ui{std::make_unique<ApproximatePlotWidget_Ui>(this)}
     , coeffs_{}
+    , currentPeakIndex_{0}
 {
     if (parent != nullptr)
         parent->installEventFilter(this);
@@ -48,11 +47,11 @@ void ApproximatePlotWidget::setData(const QList<QList<double>> &data)
     connect(ui->settingsWindow, &ApproximatePlotSettingsWidget::offsetChanged, this, [this](int offset, const QPointF &pos) -> void {
         approximateData(ui->settingsWindow->polynomialOrder(), offset, pos);
     });
-    connect(ui->settingsWindow, &ApproximatePlotSettingsWidget::offsetChanged, this, [this]([[maybe_unused]] int index, const QPointF &pos) -> void {
+    connect(ui->settingsWindow, &ApproximatePlotSettingsWidget::offsetChanged, this, [this](int index, const QPointF &pos) -> void {
         if (ui->plot->currentMarkerPosition().second != pos)
             ui->plot->setMarkerPosition(pos);
     });
-    connect(ui->plot, &Plot::markerMoved, this, [this]([[maybe_unused]] int index, const QPointF &pos) -> void {
+    connect(ui->plot, &Plot::markerMoved, this, [this](int index, const QPointF &pos) -> void {
         if (ui->settingsWindow->offsetPosition() != pos)
             ui->settingsWindow->setOffsetPosition(pos);
     });
@@ -86,6 +85,16 @@ void ApproximatePlotWidget::calculateQ()
     emit qCalculated(result);
 }
 
+void ApproximatePlotWidget::findOffset()
+{
+    const auto data = ui->plot->data(Normalized, 1024);
+    const auto peaks = ApproximatePlotProcessor{}.peakData(data[1]);
+    // qDebug() << peaks.size();
+
+    ui->plot->setMarkerPosition(QPointF{data[0][peaks[currentPeakIndex_]], data[1][peaks[currentPeakIndex_]]});
+    currentPeakIndex_ == peaks.size() - 1 ? currentPeakIndex_ = 0 : ++currentPeakIndex_;
+}
+
 void ApproximatePlotWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     if (event->reason() == QContextMenuEvent::Mouse)
@@ -116,6 +125,9 @@ void ApproximatePlotWidget::normalizeData()
         ui->originalData->column(1, { 0, ui->originalData->rowCount() - 1 })
     );
 
-    ui->settingsWindow->setOffsetPlotData(normalizedDataX, normalizedDataY);
     ui->plot->setData(Normalized, normalizedDataX, normalizedDataY, "I", true);
+
+    const auto data = ui->plot->data(Normalized, 1024);
+    ui->plot->setData(Normalized, data[0], data[1], "I", true);
+    ui->settingsWindow->setOffsetPlotData(data[0], data[1]);
 }

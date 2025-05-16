@@ -28,21 +28,31 @@ MainWindow::MainWindow(QWidget *parent) noexcept
                 plotWidget->calculateQ();
         }
     });
+    connect(ui->toolBar->actions()[ToolBar::FindOffset], &QAction::triggered, this, [this]() -> void {
+        if (MdiArea::instance()->activeSubWindow() != nullptr)
+        {
+            if (auto plotWidget = qobject_cast<ApproximatePlotWidget *>(MdiArea::instance()->activeSubWindow()->widget()))
+                plotWidget->findOffset();
+        }
+    });
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, [this](QMdiSubWindow *subWindow) -> void {
         if (subWindow != nullptr)
         {
             if (auto plotWidget = qobject_cast<ApproximatePlotWidget *>(subWindow->widget()))
             {
                 ui->toolBar->actions()[ToolBar::CalculateQ]->setEnabled(true);
+                ui->toolBar->actions()[ToolBar::FindOffset]->setEnabled(true);
                 ui->statusBar->setCoefficients(plotWidget->coeffs());
             }
             else if (auto plotWidget = qobject_cast<TemperaturePlotWidget *>(subWindow->widget()))
             {
                 ui->toolBar->actions()[ToolBar::CalculateQ]->setEnabled(true);
+                ui->toolBar->actions()[ToolBar::FindOffset]->setEnabled(false);
             }
             else
             {
                 ui->toolBar->actions()[ToolBar::CalculateQ]->setEnabled(false);
+                ui->toolBar->actions()[ToolBar::FindOffset]->setEnabled(false);
             }
         }
     });
