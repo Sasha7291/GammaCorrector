@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "mainwindow_ui.h"
 
+#include "aboutdialog.h"
 #include "approximateplotwidget.h"
 #include "temperatureplotwidget.h"
 #include "utils.h"
@@ -24,8 +25,8 @@ MainWindow::MainWindow(QWidget *parent) noexcept
     connect(ui->menuBar->viewMenu->actions()[ViewMenu::NextSubWindow], &QAction::triggered, MdiArea::instance(), &MdiArea::activateNextSubWindowWidget);
     connect(ui->menuBar->viewMenu->actions()[ViewMenu::PreviousSubWindow], &QAction::triggered, MdiArea::instance(), &MdiArea::activatePreviousSubWindowWidget);
     connect(ui->menuBar->viewMenu->actions()[ViewMenu::CloseAllSubWindows], &QAction::triggered, MdiArea::instance(), &QMdiArea::closeAllSubWindows);
-    connect(ui->menuBar->aboutMenu->actions()[AboutMenu::About], &QAction::triggered, this, []() -> void {
-
+    connect(ui->menuBar->aboutMenu->actions()[AboutMenu::About], &QAction::triggered, this, [this]() -> void {
+        (new AboutDialog{this})->show();
     });
     connect(ui->menuBar->aboutMenu->actions()[AboutMenu::AboutQt], &QAction::triggered, qApp, &QApplication::aboutQt);
     connect(ui->toolBar->actions()[ToolBar::CalculateQ], &QAction::triggered, this, [this]() -> void {

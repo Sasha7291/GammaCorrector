@@ -11,7 +11,9 @@ Application::Application(int &argc, char **argv)
     : QApplication{argc, argv}
     , mainWindow_{new MainWindow}
 {
-    setApplicationName("Gamma correction");
+    setApplicationName(PROGRAMM_NAME);
+    setApplicationVersion(PROGRAMM_VERSION);
+    setApplicationDisplayName(PROGRAMM_NAME);
 }
 
 int Application::execute()

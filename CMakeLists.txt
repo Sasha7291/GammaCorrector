@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(GammaTransformer VERSION 0.1 LANGUAGES CXX)
+project(GammaCorrector VERSION 1.4.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -32,6 +32,7 @@ qt_add_resources(${PROJECT_NAME} "icons"
     ${ICONS_ROOT}/close_table.png
     ${ICONS_ROOT}/exit.png
     ${ICONS_ROOT}/find_offset.png
+    ${ICONS_ROOT}/github.png
     ${ICONS_ROOT}/main_icon.png
     ${ICONS_ROOT}/next_sub_window.png
     ${ICONS_ROOT}/open.png
@@ -44,7 +45,13 @@ qt_add_resources(${PROJECT_NAME} "icons"
     ${ICONS_ROOT}/table.png
     ${ICONS_ROOT}/tile.png
 )
-target_compile_definitions(${PROJECT_NAME} PRIVATE QT)
+string(TIMESTAMP DATE "%Y.%m.%d")
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+  QT
+  PROGRAMM_VERSION="${CMAKE_PROJECT_VERSION}"
+  PROGRAMM_NAME="Gamma corrector"
+  PROGRAMM_DATE="${DATE}"
+)
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${SRC_ROOT}
   ${SRC_ROOT}/data
