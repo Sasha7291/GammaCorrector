@@ -1,7 +1,7 @@
 #include "application.h"
 
+#include "logger.h"
 #include "mainwindow.h"
-#include "utils.h"
 
 #include <QSharedMemory>
 #include <QSystemSemaphore>
@@ -18,6 +18,8 @@ Application::Application(int &argc, char **argv)
 
 int Application::execute()
 {
+    Logger::startLogging(Logger::LogToFile);
+
     QSystemSemaphore semaphore("GCSemaphore", 1, QSystemSemaphore::Open);
     semaphore.acquire();
 
@@ -32,7 +34,7 @@ int Application::execute()
 
     if (isRunning)
     {
-        utils::showWarningMessage("Application is already running");
+        qCritical() << "Application is already running";
         return 1;
     }
 

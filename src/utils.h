@@ -12,7 +12,6 @@ concept Number = std::integral<T> || std::floating_point<T>;
 
 [[nodiscard]] QString getOpenFileName() noexcept;
 [[nodiscard]] QString getSaveFileName() noexcept;
-void showWarningMessage(const QString &message) noexcept;
 
 QString sign(Number auto value) noexcept
 {

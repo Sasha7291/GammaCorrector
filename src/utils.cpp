@@ -39,15 +39,4 @@ QString getSaveFileName() noexcept
     return path;
 }
 
-void showWarningMessage(const QString &message) noexcept
-{
-    QMessageBox::warning(
-        nullptr,
-        "Warning!",
-        message,
-        QMessageBox::Ok,
-        QMessageBox::NoButton
-    );
-}
-
 }

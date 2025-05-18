@@ -138,13 +138,13 @@ void MainWindow::loadData()
             }
             else
             {
-                utils::showWarningMessage("Invalid data!");
+                qWarning() << "Invalid data!";
             }
         }
     }
     catch (const csv::Exception &exception)
     {
-        utils::showWarningMessage(exception.what());
+        qWarning() << exception.what();
     }
 }
 
@@ -159,6 +159,6 @@ void MainWindow::saveData()
     }
     catch (const csv::Exception &exception)
     {
-        utils::showWarningMessage(exception.what());
+        qWarning() << exception.what();
     }
 }

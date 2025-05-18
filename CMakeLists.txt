@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS DataVisualization Graphs Widgets)
 
 set(SRC_ROOT ${PROJECT_SOURCE_DIR}/src)
-set(ICONS_ROOT  icons)
+set(ICONS_ROOT icons)
 file(GLOB SOURCES ${SRC_ROOT}/*.cpp ${SRC_ROOT}/*/*.cpp ${SRC_ROOT}/*/*/*.cpp ${SRC_ROOT}/*/*/*/*.cpp)
 file(GLOB HEADERS ${SRC_ROOT}/*.h ${SRC_ROOT}/*/*.h ${SRC_ROOT}/*/*/*.h ${SRC_ROOT}/*/*/*/*.h)
 
