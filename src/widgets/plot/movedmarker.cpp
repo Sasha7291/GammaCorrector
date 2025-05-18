@@ -41,9 +41,15 @@ MovedMarker::MovedMarker(Plot *parent, Curve *curve)
 
 MovedMarker::~MovedMarker() {}
 
-std::pair<int, QPointF> MovedMarker::currentPosition() const noexcept
+QPair<std::size_t, QPointF> MovedMarker::currentPosition() const noexcept
 {
-    auto index = std::lround((marker_->xValue() - origin_) / range_ * curve_->dataSize());
+    auto index = std::min(
+        std::max(
+            0ull,
+            static_cast<std::size_t>(std::llround((marker_->xValue() - origin_) / range_ * curve_->dataSize()))
+        ),
+        curve_->dataSize()
+    );
     return std::make_pair(index, curve_->sample(index));
 }
 
@@ -86,7 +92,7 @@ void MovedMarker::setMark(double x)
 
 void MovedMarker::move(const QPointF &pos)
 {
-    if (pos.x() < origin_ || pos.x() > (origin_ + range_))
+    if (pos.x() <= origin_ || pos.x() >= (origin_ + range_))
         return;
 
     setMark(pos.x());

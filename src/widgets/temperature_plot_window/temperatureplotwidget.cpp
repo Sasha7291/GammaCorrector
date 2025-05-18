@@ -21,15 +21,17 @@ TemperaturePlotWidget::~TemperaturePlotWidget() {}
 void TemperaturePlotWidget::setData(const QList<QList<double>> &data)
 {
     data_ = data;
-    ui->settingsWindow->setTemperatureRange({ std::ranges::min(data[0]), std::ranges::max(data[0]) });
+    const auto [minT, maxT] = std::ranges::minmax(data[0]);
+    ui->settingsWindow->setTemperatureRange({ minT, maxT });
     ui->plot->setAxisTitles({ "T, K", "Q, dsc" });
 
-    const auto maxVoltage = std::ranges::max(data[1]);
+    const auto offset = data[1][data[0].indexOf(minT)];
+    const auto maxVoltage = std::ranges::max(data[2]) - offset;
     for (int i = 2; i < data.size(); ++i)
     {
         auto tempData = data[i];
         for (int j = 0; j < tempData.size(); ++j)
-            tempData[j] = tempData[j] / data[1][j] * maxVoltage;
+            tempData[j] = (tempData[j] / 1023.0 * data[1][j] - offset) / maxVoltage * 1023.0;
         approximateData(static_cast<CurveName>(i - 2), data[0], data[i], ui->settingsWindow->polynomialOrder());
     }
 }

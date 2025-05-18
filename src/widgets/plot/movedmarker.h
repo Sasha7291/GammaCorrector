@@ -21,7 +21,7 @@ public:
     MovedMarker &operator=(const MovedMarker&) = delete;
     MovedMarker &operator=(MovedMarker&&) = delete;
 
-    [[nodiscard]] std::pair<int, QPointF> currentPosition() const noexcept;
+    [[nodiscard]] QPair<std::size_t, QPointF> currentPosition() const noexcept;
     void hide();
     [[nodiscard]] inline bool isShown() const noexcept { return shown_; }
     void reset(const double origin, const double end);

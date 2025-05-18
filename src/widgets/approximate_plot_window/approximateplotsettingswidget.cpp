@@ -28,7 +28,7 @@ double ApproximatePlotSettingsWidget::gammaCorrectionOrder() const
     return ui->gammaCorrectionOrderDoubleSpinBox->value();
 }
 
-int ApproximatePlotSettingsWidget::offsetIndex() const
+std::size_t ApproximatePlotSettingsWidget::offsetIndex() const
 {
     return ui->offsetPlot->currentMarkerPosition().first;
 }
@@ -38,7 +38,7 @@ QPointF ApproximatePlotSettingsWidget::offsetPosition() const
     return ui->offsetPlot->currentMarkerPosition().second;
 }
 
-int ApproximatePlotSettingsWidget::polynomialOrder() const
+std::size_t ApproximatePlotSettingsWidget::polynomialOrder() const
 {
     return ui->polynomialOrderComboBox->currentPolynomialOrder();
 }
@@ -51,6 +51,7 @@ void ApproximatePlotSettingsWidget::setOffsetPosition(const QPointF &pos)
 void ApproximatePlotSettingsWidget::setOffsetPlotData(const QList<double> &keys, const QList<double> &values)
 {
     ui->offsetPlot->setData(0, keys, values, "", true);
+    ui->offsetPlot->showMarker();
 }
 
 void ApproximatePlotSettingsWidget::setTemperature(double temperature)

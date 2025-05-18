@@ -37,7 +37,7 @@ private:
         CoefficientsQ
     };
 
-    void approximateData(std::size_t order, int offset, const QPointF &pos);
+    void approximateData(std::size_t order, std::size_t offset, const QPointF &pos);
     void gammaData(double degree);
     void normalizeData();
 

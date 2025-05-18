@@ -1,6 +1,7 @@
 #include "approximateplotprocessor.h"
 
 #include "lsa_approximator.h"
+#include "psr_curvesproximity.h"
 #include "psr_findpeaks.h"
 #include "psr_gaussfilter.h"
 #include "psr_line.h"
@@ -9,25 +10,22 @@
 #include "psr_polynomial.h"
 #include "psr_powerfunction.h"
 #include "psr_rationing.h"
+#include "psr_spearmancoefficient.h"
 
 
-QList<QList<double> > ApproximatePlotProcessor::approximatedData(
+QList<QList<double>> ApproximatePlotProcessor::approximatedData(
     const QList<double> &keys,
     const QList<double> &values,
     std::size_t order,
-    double fromKey
+    int offset
 ) const
 {
-    const auto offsetIt = std::find_if(keys.cbegin(), keys.cend(), [fromKey](double value) -> bool {
-        return value > fromKey;
-    });
-    const auto offsetIndex = keys.indexOf(*offsetIt);
-    const auto slicedX = QList<double>{ offsetIt, keys.cend() };
-    const auto slicedY = values.last(values.size() - offsetIndex);
+    const auto slicedX = keys.last(keys.size() - offset);
+    const auto slicedY = values.last(values.size() - offset);
 
     const auto coeffs = lsa::Approximator().polynomial(slicedX, slicedY, order);
     auto [resultKeys, resultValues] = psr::Polynomial<double>{keys.front(), keys.back()}(1024, coeffs);
-    std::fill(resultValues.begin(), resultValues.begin() + offsetIndex, 0.0);
+    std::fill(resultValues.begin(), resultValues.begin() + offset, 0.0);
 
     return { coeffs, resultKeys, resultValues };
 }
@@ -56,7 +54,7 @@ QList<std::size_t> ApproximatePlotProcessor::peakData(const QList<double> &value
     QList<double> tempValues(values.size() - 2);
 
     for (std::size_t i = 1; i < tempValues.size(); ++i)
-        tempValues[i] = std::log(values[i + 1] / values[i]);
+        tempValues[i] = std::log(std::abs(values[i + 1] / values[i]));
 
     // 19 - эмпирически подобранное значение
     const auto peaks = psr::PeakFinder<double>{}(psr::GaussFilter<double>{}(psr::MedianFilter<double>{}(tempValues, 19), 19));
@@ -67,6 +65,18 @@ QList<std::size_t> ApproximatePlotProcessor::peakData(const QList<double> &value
         result.push_back(peaks[i].position);
 
     return result;
+}
+
+QList<double> ApproximatePlotProcessor::statisticsData(
+    const QList<double> &keys,
+    const QList<double> &values,
+    const QList<double> &approximatedValues
+) const
+{
+    return {
+        psr::SpearmanCoefficient<double>{}(keys, values),
+        psr::CurvesProximity<double>{}(values, approximatedValues)
+    };
 }
 
 QList<double> ApproximatePlotProcessor::substractLineData(const QList<double> &keys, const QList<double> &values) const

@@ -60,15 +60,15 @@ void ApproximatePlotWidget::setData(const QList<QList<double>> &data)
 
 void ApproximatePlotWidget::calculateQ()
 {
-    QList<double> result(3);
-    result[0] = ui->settingsWindow->gammaCorrectionOrder();
-    result[1] = ui->settingsWindow->temperature();
-    result[2] = std::ranges::max(ui->originalData->column(0, { 0 , ui->originalData->rowCount() - 1 }));
-
     const auto gammaDataY = ui->plot->data(Gamma, 256)[1];
     const auto approximatedData = ui->plot->data(Approximated, 1024);
     auto [qX, qY] = ApproximatePlotProcessor{}.qData(gammaDataY, approximatedData[0], approximatedData[1], ui->settingsWindow->offsetPosition().x());
 
+    QList<double> result(4);
+    result[0] = ui->settingsWindow->gammaCorrectionOrder();
+    result[1] = ui->settingsWindow->temperature();
+    result[3] = std::ranges::max(ui->originalData->column(0, { 0 , ui->originalData->rowCount() - 1 }));
+    result[2] = ui->settingsWindow->offsetPosition().x() / 1023.0 * result[3];
     result << qY;
 
     for (auto it = qY.begin(); it != qY.end(); ++it)
@@ -117,15 +117,26 @@ void ApproximatePlotWidget::contextMenuEvent(QContextMenuEvent *event)
         ui->showContextMenu(event->pos());
 }
 
-void ApproximatePlotWidget::approximateData(std::size_t order, int offset, const QPointF &pos)
+void ApproximatePlotWidget::approximateData(std::size_t order, std::size_t offset, const QPointF &pos)
 {
-    const auto data = ui->plot->data(Normalized, 1024);
-    const auto approximatedData = ApproximatePlotProcessor{}.approximatedData(data[0], data[1], order, pos.x());
+    try
+    {
+        const auto data = ui->plot->data(Normalized, 1024ull);
+        const auto approximatedData = ApproximatePlotProcessor{}.approximatedData(data[0], data[1], order, offset);
 
-    coeffs_ = approximatedData[0];
-    ui->originalData->hideRowTo(offset);
-    ui->plot->setData(Approximated, approximatedData[1], approximatedData[2], "I_app", true);
-    emit coeffsChanged(coeffs_);
+        coeffs_ = approximatedData[0] + ApproximatePlotProcessor{}.statisticsData(
+            data[0].last(data[0].size() - offset),
+            data[1].last(data[1].size() - offset),
+            approximatedData[2].last(approximatedData[2].size() - offset)
+        );
+        ui->originalData->hideRowTo(offset);
+        ui->plot->setData(Approximated, approximatedData[1], approximatedData[2], "I_app", true);
+        emit coeffsChanged(coeffs_);
+    }
+    catch (const std::exception &exception)
+    {
+        qWarning() << exception.what();
+    }
 }
 
 void ApproximatePlotWidget::gammaData(double degree)

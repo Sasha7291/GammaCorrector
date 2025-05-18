@@ -17,7 +17,7 @@ public:
 private:
     const QString _PATTERN_ =
     R"(
-    %1 = %2
+    %1 = %2; &rho; = %3; RMSE = %4
     )";
 
     QList<double> coeffs_;

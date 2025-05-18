@@ -19,6 +19,15 @@ MainWindow::MainWindow(QWidget *parent) noexcept
     connect(ui->menuBar->fileMenu->actions()[FileMenu::Open], &QAction::triggered, this, &MainWindow::loadData);
     connect(ui->menuBar->fileMenu->actions()[FileMenu::Save], &QAction::triggered, this, &MainWindow::saveData);
     connect(ui->menuBar->fileMenu->actions()[FileMenu::Exit], &QAction::triggered, qApp, &QApplication::exit);
+    connect(ui->menuBar->viewMenu->actions()[ViewMenu::CascadeArrange], &QAction::triggered, MdiArea::instance(), &QMdiArea::cascadeSubWindows);
+    connect(ui->menuBar->viewMenu->actions()[ViewMenu::TileArrange], &QAction::triggered, MdiArea::instance(), &QMdiArea::tileSubWindows);
+    connect(ui->menuBar->viewMenu->actions()[ViewMenu::NextSubWindow], &QAction::triggered, MdiArea::instance(), &MdiArea::activateNextSubWindowWidget);
+    connect(ui->menuBar->viewMenu->actions()[ViewMenu::PreviousSubWindow], &QAction::triggered, MdiArea::instance(), &MdiArea::activatePreviousSubWindowWidget);
+    connect(ui->menuBar->viewMenu->actions()[ViewMenu::CloseAllSubWindows], &QAction::triggered, MdiArea::instance(), &QMdiArea::closeAllSubWindows);
+    connect(ui->menuBar->aboutMenu->actions()[AboutMenu::About], &QAction::triggered, this, []() -> void {
+
+    });
+    connect(ui->menuBar->aboutMenu->actions()[AboutMenu::AboutQt], &QAction::triggered, qApp, &QApplication::aboutQt);
     connect(ui->toolBar->actions()[ToolBar::CalculateQ], &QAction::triggered, this, [this]() -> void {
         if (MdiArea::instance()->activeSubWindow() != nullptr)
         {
@@ -65,6 +74,12 @@ MainWindow::MainWindow(QWidget *parent) noexcept
                 ui->toolBar->actions()[ToolBar::SubstractLine]->setEnabled(false);
             }
         }
+        else
+        {
+            ui->toolBar->actions()[ToolBar::CalculateQ]->setEnabled(false);
+            ui->toolBar->actions()[ToolBar::FindOffset]->setEnabled(false);
+            ui->toolBar->actions()[ToolBar::SubstractLine]->setEnabled(false);
+        }
     });
 }
 
@@ -86,6 +101,7 @@ void MainWindow::loadData()
 
                 MdiArea::openSubWindow(plotWidget, title.first(title.lastIndexOf(".")));
                 plotWidget->setData(data);
+                ui->statusBar->setCoefficients(plotWidget->coeffs());
 
                 connect(plotWidget, &QObject::destroyed, ui->statusBar, &StatusBar::clear);
                 connect(plotWidget, &ApproximatePlotWidget::coeffsChanged, ui->statusBar, &StatusBar::setCoefficients);

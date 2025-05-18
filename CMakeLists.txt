@@ -26,16 +26,23 @@ qt_add_executable(${PROJECT_NAME}
 qt_add_resources(${PROJECT_NAME} "icons"
   PREFIX "/"
   FILES
+    ${ICONS_ROOT}/about.png
+    ${ICONS_ROOT}/cascade.png
+    ${ICONS_ROOT}/close_all_windows.png
     ${ICONS_ROOT}/close_table.png
     ${ICONS_ROOT}/exit.png
     ${ICONS_ROOT}/find_offset.png
     ${ICONS_ROOT}/main_icon.png
+    ${ICONS_ROOT}/next_sub_window.png
     ${ICONS_ROOT}/open.png
+    ${ICONS_ROOT}/previous_sub_window.png
     ${ICONS_ROOT}/Q.png
+    ${ICONS_ROOT}/Qt.png
     ${ICONS_ROOT}/save.png
     ${ICONS_ROOT}/settings.png
     ${ICONS_ROOT}/substract_line.png
     ${ICONS_ROOT}/table.png
+    ${ICONS_ROOT}/tile.png
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE QT)
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -46,6 +53,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${SRC_ROOT}/widgets/approximate_plot_window
   ${SRC_ROOT}/widgets/main_window
   ${SRC_ROOT}/widgets/main_window/mdi_area
+  ${SRC_ROOT}/widgets/main_window/menu_bar
+  ${SRC_ROOT}/widgets/main_window/status_bar
   ${SRC_ROOT}/widgets/plot
   ${SRC_ROOT}/widgets/plot_3d
   ${SRC_ROOT}/widgets/table_widget

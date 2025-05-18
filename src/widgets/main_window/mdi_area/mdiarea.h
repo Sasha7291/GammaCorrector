@@ -14,6 +14,10 @@ public:
     static MdiArea *instance();
     static QMdiSubWindow *openSubWindow(QWidget *widget = new QWidget, const QString &name = QString{}, bool autoDelete = true);
 
+public slots:
+    void activateNextSubWindowWidget();
+    void activatePreviousSubWindowWidget();
+
 private:
     explicit MdiArea(QWidget *parent = nullptr);
     ~MdiArea() = default;

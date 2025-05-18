@@ -1,12 +1,7 @@
-#include "mainwindow.h"
-
-#include <QApplication>
+#include "application.h"
 
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.showMaximized();
-    return a.exec();
+    return Application{argc, argv}.execute();
 }

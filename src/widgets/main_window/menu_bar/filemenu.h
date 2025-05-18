@@ -14,6 +14,7 @@ public:
     {
         Open,
         Save,
+        Separator_1,
         Exit
     };
 

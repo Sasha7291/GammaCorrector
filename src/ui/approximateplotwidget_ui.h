@@ -1,7 +1,7 @@
 #pragma once
 
-#include "plot.h"
 #include "approximateplotsettingswidget.h"
+#include "plot.h"
 #include "tablewidget.h"
 
 #include <QPointer>

@@ -21,7 +21,7 @@ public:
     Plot &operator=(const Plot &) = delete;
     Plot &operator=(Plot &&) = delete;
 
-    [[nodiscard]] QPair<int, QPointF> currentMarkerPosition() const noexcept;
+    [[nodiscard]] QPair<std::size_t, QPointF> currentMarkerPosition() const noexcept;
     [[nodiscard]] QList<QList<double>> data(int index, std::size_t size) const noexcept;
     [[nodiscard]] bool isMovedMarkerShown() const noexcept;
     void setAxisOrigin(QwtAxisId axis, double origin);

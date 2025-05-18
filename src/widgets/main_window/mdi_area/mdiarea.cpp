@@ -1,5 +1,7 @@
 #include "mdiarea.h"
 
+#include "subwindowwidget.h"
+
 
 MdiArea *MdiArea::create(QWidget *parent)
 {
@@ -19,6 +21,20 @@ MdiArea *MdiArea::instance()
 QMdiSubWindow *MdiArea::openSubWindow(QWidget *widget, const QString &name, bool autoDelete)
 {
     return new MdiSubWindow{instance(), widget, name, autoDelete};
+}
+
+void MdiArea::activateNextSubWindowWidget()
+{
+    activateNextSubWindow();
+    while (qobject_cast<SubWindowWidget *>(activeSubWindow()->widget()) == nullptr)
+        activateNextSubWindow();
+}
+
+void MdiArea::activatePreviousSubWindowWidget()
+{
+    activatePreviousSubWindow();
+    while (qobject_cast<SubWindowWidget *>(activeSubWindow()->widget()) == nullptr)
+        activatePreviousSubWindow();
 }
 
 MdiArea::MdiArea(QWidget *parent)

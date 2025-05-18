@@ -45,12 +45,12 @@ Plot::Plot(QWidget *parent)
 
 Plot::~Plot() {}
 
-QPair<int, QPointF> Plot::currentMarkerPosition() const noexcept
+QPair<std::size_t, QPointF> Plot::currentMarkerPosition() const noexcept
 {
     if (movedMarker_ != nullptr)
         return movedMarker_->currentPosition();
 
-    return {0, QPointF{}};
+    return {0ull, QPointF{}};
 }
 
 QList<QList<double>> Plot::data(int index, std::size_t size) const noexcept

@@ -74,7 +74,8 @@ void DockWidget::setQ(SubWindowWidget *subWindowWidget, const QList<double> &Q)
         mainTableWidget_->setHorizontalHeaderLabels({
             "γ",
             "T, K",
-            "V_max, dsc",
+            "V_offset, V",
+            "V_max, V",
             "Q1, dsc",
             "Q2, dsc",
             "Q3, dsc",

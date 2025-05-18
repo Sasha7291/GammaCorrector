@@ -14,9 +14,9 @@ public:
     ~ApproximatePlotSettingsWidget();
 
     [[nodiscard]] double gammaCorrectionOrder() const;
-    [[nodiscard]] int offsetIndex() const;
+    [[nodiscard]] std::size_t offsetIndex() const;
     [[nodiscard]] QPointF offsetPosition() const;
-    [[nodiscard]] int polynomialOrder() const;
+    [[nodiscard]] std::size_t polynomialOrder() const;
     void setOffsetPosition(const QPointF &pos);
     void setOffsetPlotData(const QList<double> &keys, const QList<double> &values);
     void setTemperature(double temperature);
@@ -24,7 +24,7 @@ public:
 
 signals:
     void gammaCorrectionDegreeChanged(double degree);
-    void offsetChanged(int index, const QPointF &pos);
+    void offsetChanged(std::size_t index, const QPointF &pos);
     void polynomialOrderChanged(std::size_t order);
 
 private:
