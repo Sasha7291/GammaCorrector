@@ -14,6 +14,7 @@ public:
     ~TemperaturePlotSettingsWidget();
 
     [[nodiscard]] std::size_t polynomialOrder() const;
+    void setMaximumPolynomialOrder(std::size_t order);
     void setTemperatureRange(const QPair<double, double> &range);
     void setTemperature(double temperature);
     [[nodiscard]] double temperature() const;

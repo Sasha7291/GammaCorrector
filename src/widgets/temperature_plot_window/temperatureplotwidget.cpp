@@ -20,19 +20,27 @@ TemperaturePlotWidget::~TemperaturePlotWidget() {}
 
 void TemperaturePlotWidget::setData(const QList<QList<double>> &data)
 {
-    data_ = data;
-    const auto [minT, maxT] = std::ranges::minmax(data[0]);
-    ui->settingsWindow->setTemperatureRange({ minT, maxT });
-    ui->plot->setAxisTitles({ "T, K", "Q, dsc" });
-
-    const auto offset = data[1][data[0].indexOf(minT)];
-    const auto maxVoltage = std::ranges::max(data[2]) - offset;
-    for (int i = 2; i < data.size(); ++i)
+    try
     {
-        auto tempData = data[i];
-        for (int j = 0; j < tempData.size(); ++j)
-            tempData[j] = (tempData[j] / 1023.0 * data[1][j] - offset) / maxVoltage * 1023.0;
-        approximateData(static_cast<CurveName>(i - 2), data[0], data[i], ui->settingsWindow->polynomialOrder());
+        data_ = data;
+        const auto [minT, maxT] = std::ranges::minmax(data[0]);
+        ui->settingsWindow->setTemperatureRange({ minT, maxT });
+        ui->settingsWindow->setMaximumPolynomialOrder(std::min(7ll, data[0].size()));
+        ui->plot->setAxisTitles({ "T, K", "Q, dsc" });
+
+        const auto offset = data[1][data[0].indexOf(minT)];
+        const auto maxVoltage = std::ranges::max(data[2]) - offset;
+        for (int i = 2; i < data.size(); ++i)
+        {
+            auto tempData = data[i];
+            for (int j = 0; j < tempData.size(); ++j)
+                tempData[j] = (tempData[j] / 1023.0 * data[1][j] - offset) / maxVoltage * 1023.0;
+            approximateData(static_cast<CurveName>(i - 2), data[0], data[i], ui->settingsWindow->polynomialOrder());
+        }
+    }
+    catch (const std::exception &exception)
+    {
+        qWarning() << exception.what();
     }
 }
 

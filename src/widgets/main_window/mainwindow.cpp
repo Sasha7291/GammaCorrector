@@ -90,57 +90,58 @@ void MainWindow::loadData()
 {
     try
     {
-        auto path = utils::getOpenFileName();
-        if (!path.isEmpty())
-        {
-            auto title = path.split("/").back();
-            auto data = csv::Reader<double>{csv::Columns}(QDir{path}.filesystemAbsolutePath());
-
-            if (data.size() == 2)
+        auto paths = utils::getOpenFileNames();
+        for (auto &path : paths)
+            if (!path.isEmpty())
             {
-                auto plotWidget = new ApproximatePlotWidget{this};
+                auto title = path.split("/").back();
+                auto data = csv::Reader<double>{csv::Columns}(QDir{path}.filesystemAbsolutePath());
 
-                MdiArea::openSubWindow(plotWidget, title.first(title.lastIndexOf(".")));
-                plotWidget->setData(data);
-                ui->statusBar->setCoefficients(plotWidget->coeffs());
-
-                connect(plotWidget, &QObject::destroyed, ui->statusBar, &StatusBar::clear);
-                connect(plotWidget, &ApproximatePlotWidget::coeffsChanged, ui->statusBar, &StatusBar::setCoefficients);
-                connect(plotWidget, &ApproximatePlotWidget::qCalculated, this, [this, plotWidget](const QList<double> &Q) -> void {
-                    ui->dockWidget->setQ(plotWidget, Q);
-                });
-            }
-            else if (data.size() == 11)
-            {
-                QSet gammas(data[0].cbegin(), data[0].cend());
-
-                for (const auto &gamma : gammas)
+                if (data.size() == 2)
                 {
-                    auto plotWidget = new TemperaturePlotWidget{this};
-                    QList<QList<double>> tempData(data.size() - 1, QList<double>{});
+                    auto plotWidget = new ApproximatePlotWidget{this};
 
-                    for (int i = 0; i < data[0].size(); i++)
-                        if (data[0][i] == gamma)
-                            for (int j = 1; j < data.size(); ++j)
-                                tempData[j - 1] << data[j][i];
+                    MdiArea::openSubWindow(plotWidget, title.first(title.lastIndexOf(".")));
+                    plotWidget->setData(data);
+                    ui->statusBar->setCoefficients(plotWidget->coeffs());
 
-                    MdiArea::openSubWindow(plotWidget, "γ = " + QString::number(gamma) + ": " + title.first(title.lastIndexOf(".")));
-                    plotWidget->setData(tempData);
-                    ui->dockWidget->createTableWidget(plotWidget);
-
-                    connect(plotWidget, &QObject::destroyed, this, [this, plotWidget]() -> void {
-                        ui->dockWidget->removeTableWidget(plotWidget);
-                    });
-                    connect(plotWidget, &TemperaturePlotWidget::qCalculated, this, [this, plotWidget](const QList<double> &Q) -> void {
+                    connect(plotWidget, &QObject::destroyed, ui->statusBar, &StatusBar::clear);
+                    connect(plotWidget, &ApproximatePlotWidget::coeffsChanged, ui->statusBar, &StatusBar::setCoefficients);
+                    connect(plotWidget, &ApproximatePlotWidget::qCalculated, this, [this, plotWidget](const QList<double> &Q) -> void {
                         ui->dockWidget->setQ(plotWidget, Q);
                     });
                 }
+                else if (data.size() == 11)
+                {
+                    QSet gammas(data[0].cbegin(), data[0].cend());
+
+                    for (const auto &gamma : gammas)
+                    {
+                        auto plotWidget = new TemperaturePlotWidget{this};
+                        QList<QList<double>> tempData(data.size() - 1, QList<double>{});
+
+                        for (int i = 0; i < data[0].size(); i++)
+                            if (data[0][i] == gamma)
+                                for (int j = 1; j < data.size(); ++j)
+                                    tempData[j - 1] << data[j][i];
+
+                        MdiArea::openSubWindow(plotWidget, "γ = " + QString::number(gamma) + ": " + title.first(title.lastIndexOf(".")));
+                        plotWidget->setData(tempData);
+                        ui->dockWidget->createTableWidget(plotWidget);
+
+                        connect(plotWidget, &QObject::destroyed, this, [this, plotWidget]() -> void {
+                            ui->dockWidget->removeTableWidget(plotWidget);
+                        });
+                        connect(plotWidget, &TemperaturePlotWidget::qCalculated, this, [this, plotWidget](const QList<double> &Q) -> void {
+                            ui->dockWidget->setQ(plotWidget, Q);
+                        });
+                    }
+                }
+                else
+                {
+                    qWarning() << "Invalid data!";
+                }
             }
-            else
-            {
-                qWarning() << "Invalid data!";
-            }
-        }
     }
     catch (const csv::Exception &exception)
     {

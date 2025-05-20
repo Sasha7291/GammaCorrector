@@ -18,7 +18,7 @@ Application::Application(int &argc, char **argv)
 
 int Application::execute()
 {
-    Logger::startLogging(Logger::LogToFile);
+    // Logger::startLogging(Logger::LogToFile);
 
     QSystemSemaphore semaphore("GCSemaphore", 1, QSystemSemaphore::Open);
     semaphore.acquire();

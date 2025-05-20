@@ -3,6 +3,7 @@
 #include "subwindowwidget.h"
 
 
+class ApproximatePlotProcessor;
 class ApproximatePlotWidget_Ui;
 
 class ApproximatePlotWidget : public SubWindowWidget
@@ -41,6 +42,7 @@ private:
     void gammaData(double degree);
     void normalizeData();
 
+    std::unique_ptr<ApproximatePlotProcessor> processor;
     std::unique_ptr<ApproximatePlotWidget_Ui> ui;
     QList<double> coeffs_;
     std::size_t currentPeakIndex_;

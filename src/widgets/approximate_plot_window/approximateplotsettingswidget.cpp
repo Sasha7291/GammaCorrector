@@ -52,6 +52,8 @@ void ApproximatePlotSettingsWidget::setOffsetPlotData(const QList<double> &keys,
 {
     ui->offsetPlot->setData(0, keys, values, "", true);
     ui->offsetPlot->showMarker();
+    ui->offsetPlot->setAxisOrigin(QwtPlot::xBottom, 1.0);
+    // ui->offsetPlot->setAxisOrigin(QwtPlot::yLeft, 1.0);
 }
 
 void ApproximatePlotSettingsWidget::setTemperature(double temperature)

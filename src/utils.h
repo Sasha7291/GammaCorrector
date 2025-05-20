@@ -11,6 +11,7 @@ template<class T>
 concept Number = std::integral<T> || std::floating_point<T>;
 
 [[nodiscard]] QString getOpenFileName() noexcept;
+[[nodiscard]] QStringList getOpenFileNames() noexcept;
 [[nodiscard]] QString getSaveFileName() noexcept;
 
 QString sign(Number auto value) noexcept

@@ -16,6 +16,11 @@ std::size_t TemperaturePlotSettingsWidget::polynomialOrder() const
     return ui->polynomialOrderComboBox->currentPolynomialOrder();
 }
 
+void TemperaturePlotSettingsWidget::setMaximumPolynomialOrder(std::size_t order)
+{
+    ui->polynomialOrderComboBox->setMaximumPolynomialOrder(order);
+}
+
 void TemperaturePlotSettingsWidget::setTemperatureRange(const QPair<double, double> &range)
 {
     auto previousScale = ui->temperatureDoubleSpinBox->currentScale();

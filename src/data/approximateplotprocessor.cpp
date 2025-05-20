@@ -24,15 +24,21 @@ QList<QList<double>> ApproximatePlotProcessor::approximatedData(
     const auto slicedY = values.last(values.size() - offset);
 
     const auto coeffs = lsa::Approximator().polynomial(slicedX, slicedY, order);
-    auto [resultKeys, resultValues] = psr::Polynomial<double>{keys.front(), keys.back()}(1024, coeffs);
+    auto [resultKeys, resultValues] = psr::Polynomial<double>{keys.front(), keys.back()}(dataSize(), coeffs);
+
     std::fill(resultValues.begin(), resultValues.begin() + offset, 0.0);
 
     return { coeffs, resultKeys, resultValues };
 }
 
-QPair<QList<double>, QList<double>> ApproximatePlotProcessor::gammaData(const QPair<double, double> &range, double degree) const
+QList<double> ApproximatePlotProcessor::filterData(const QList<double> &data) const
 {
-    return psr::PowerFunction<double>{range.first, range.second}(1024, 1023.0 / std::pow(range.second, degree), degree);
+    return psr::GaussFilter<double>{}(psr::MedianFilter<double>{}(data, filterWidth()), filterWidth());
+}
+
+QPair<QList<double>, QList<double>> ApproximatePlotProcessor::gammaData(double degree) const
+{
+    return psr::PowerFunction<double>{dataMin(), dataMax()}(dataSize(), dataMax() / std::pow(dataMax(), degree), degree);
 }
 
 QPair<QList<double>, QList<double>> ApproximatePlotProcessor::normalizedData(
@@ -44,20 +50,18 @@ QPair<QList<double>, QList<double>> ApproximatePlotProcessor::normalizedData(
     const auto [minY, maxY] = std::ranges::minmax(values);
 
     return {
-        psr::Rationing<double>{ { minX, maxX }, { 0.0, 1023.0 } }(keys),
-        psr::Rationing<double>{ { minY, maxY }, { 0.0, 1023.0 } }(values)
+        psr::Rationing<double>{ { minX, maxX }, dataRange() }(keys),
+        psr::Rationing<double>{ { minY, maxY }, dataRange() }(values)
     };
 }
 
 QList<std::size_t> ApproximatePlotProcessor::peakData(const QList<double> &values) const
 {
     QList<double> tempValues(values.size() - 2);
-
     for (std::size_t i = 1; i < tempValues.size(); ++i)
         tempValues[i] = std::log(std::abs(values[i + 1] / values[i]));
 
-    // 19 - эмпирически подобранное значение
-    const auto peaks = psr::PeakFinder<double>{}(psr::GaussFilter<double>{}(psr::MedianFilter<double>{}(tempValues, 19), 19));
+    const auto peaks = psr::PeakFinder<double>{}(filterData(tempValues));
 
     QList<std::size_t> result;
     result.reserve(peaks.size());
@@ -79,7 +83,7 @@ QList<double> ApproximatePlotProcessor::statisticsData(
     };
 }
 
-QList<double> ApproximatePlotProcessor::substractLineData(const QList<double> &keys, const QList<double> &values) const
+QPair<QList<double>, QList<double>> ApproximatePlotProcessor::substractLineData(const QList<double> &keys, const QList<double> &values) const
 {
     double maxPc = 0.0;
     std::size_t maxPcIndex = 0;
@@ -101,10 +105,10 @@ QList<double> ApproximatePlotProcessor::substractLineData(const QList<double> &k
         { keys.cbegin(), keys.cbegin() + maxPcIndex },
         { values.cbegin(), values.cbegin() + maxPcIndex }
     );
-    auto [_, result] = psr::Line<double>{ keys.front(), keys.back() }(keys.size(), coeffs[1], coeffs[0]);
-    std::ranges::transform(values, result, result.begin(), std::minus<>());
+    auto [resultX, resultY] = psr::Line<double>{ keys.front(), keys.back() }(keys.size(), coeffs[1], coeffs[0]);
+    std::ranges::transform(values, resultY, resultY.begin(), std::minus<>());
 
-    return result;
+    return normalizedData(resultX, resultY);
 }
 
 QPair<QList<double>, QList<double>> ApproximatePlotProcessor::qData(
@@ -140,7 +144,6 @@ QPair<QList<double>, QList<double>> ApproximatePlotProcessor::qData(
         resultX[i] = 4 * resultX[i] + 3;
     }
 
-    resultX[7] = 1023.0;
-    resultY[7] = 1023.0;
+    resultX[7] = resultY[7] = dataMax();
     return { resultX, resultY };
 }

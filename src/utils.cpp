@@ -39,4 +39,20 @@ QString getSaveFileName() noexcept
     return path;
 }
 
+QStringList getOpenFileNames() noexcept
+{
+    static auto fileDir = QDir::currentPath();
+    const auto paths = QFileDialog::getOpenFileNames(
+        nullptr,
+        "Open files",
+        fileDir,
+        "CSV (*.csv)"
+    );
+
+    if (!paths.isEmpty())
+        fileDir = paths[0].sliced(0, paths[0].lastIndexOf("/"));
+
+    return paths;
+}
+
 }

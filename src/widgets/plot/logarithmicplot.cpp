@@ -23,18 +23,17 @@ void LogarithmicPlot::setData(
     bool autoScale
 )
 {
-    QMap<double, double> data;
+    auto logKeys = keys;
+    auto logValues = values;
 
-    for (int i = 0; i < keys.size(); ++i)
-        data[keys[i]] = values[i];
-    for (auto it = data.begin(); it != data.end(); )
-        (it.key() <= std::numeric_limits<double>::epsilon()
-         || it.value() <= std::numeric_limits<double>::epsilon())
-            ? it = data.erase(it)
-            : ++it;
+    for (std::size_t i = 0ull; i < keys.size() - 1; ++i)
+    {
+        if (keys[i] <= std::numeric_limits<double>::epsilon())
+            logKeys[i] = std::abs(keys[i + 1]);
+        if (values[i] <= std::numeric_limits<double>::epsilon())
+            logValues[i] = std::abs(values[i + 1]);
+    }
 
-    const auto logKeys = data.keys();
-    const auto logValues = data.values();
     const auto [minX, maxX] = std::ranges::minmax(logKeys);
     const auto [minY, maxY] = std::ranges::minmax(logValues);
 

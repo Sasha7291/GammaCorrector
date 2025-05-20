@@ -92,7 +92,7 @@ void MovedMarker::setMark(double x)
 
 void MovedMarker::move(const QPointF &pos)
 {
-    if (pos.x() <= origin_ || pos.x() >= (origin_ + range_))
+    if (pos.x() <= origin_ || pos.x() >= origin_ + range_)
         return;
 
     setMark(pos.x());

@@ -21,7 +21,13 @@ public:
         std::size_t order,
         int offset
     ) const;
-    [[nodiscard]] QPair<QList<double>, QList<double>> gammaData(const QPair<double, double> &range, double degree) const;
+    [[nodiscard]] inline double dataMax() const { return dataRange().second; }
+    [[nodiscard]] inline double dataMin() const { return dataRange().first; }
+    [[nodiscard]] inline QPair<double, double> dataRange() const { return std::make_pair(0.0, 1023.0); }
+    [[nodiscard]] inline constexpr std::size_t dataSize() const { return 1024ull; }
+    [[nodiscard]] QList<double> filterData(const QList<double> &data) const;
+    [[nodiscard]] inline constexpr std::size_t filterWidth() const { return 21ull; }
+    [[nodiscard]] QPair<QList<double>, QList<double>> gammaData(double degree) const;
     [[nodiscard]] QPair<QList<double>, QList<double>> normalizedData(
         const QList<double> &keys,
         const QList<double> &values
@@ -32,7 +38,7 @@ public:
         const QList<double> &values,
         const QList<double> &approximatedValues
     ) const;
-    [[nodiscard]] QList<double> substractLineData(const QList<double> &keys, const QList<double> &values) const;
+    [[nodiscard]] QPair<QList<double>, QList<double>> substractLineData(const QList<double> &keys, const QList<double> &values) const;
     [[nodiscard]] QPair<QList<double>, QList<double>> qData(
         const QList<double> &gamma,
         const QList<double> &keys,
