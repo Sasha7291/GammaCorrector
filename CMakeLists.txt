@@ -18,6 +18,7 @@ file(GLOB HEADERS ${SRC_ROOT}/*.h ${SRC_ROOT}/*/*.h ${SRC_ROOT}/*/*/*.h ${SRC_RO
 
 set(RESOURCES ${PROJECT_SOURCE_DIR}/resources.rc)
 qt_add_executable(${PROJECT_NAME}
+  WIN32
   MANUAL_FINALIZATION
   ${SOURCES}
   ${HEADERS}
