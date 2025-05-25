@@ -22,7 +22,7 @@ DockWidget::DockWidget(QWidget *parent)
 
 QList<QList<double> > DockWidget::data() const
 {
-    return mainTableWidget_->rows({ 0, mainTableWidget_->columnCount() - 1 }, { 0, mainTableWidget_->rowCount() - 1 });
+    return mainTableWidget_->rows({ 0, mainTableWidget_->columnCount() }, { 0, mainTableWidget_->rowCount() });
 }
 
 void DockWidget::createTableWidget(SubWindowWidget *subWindowWidget)

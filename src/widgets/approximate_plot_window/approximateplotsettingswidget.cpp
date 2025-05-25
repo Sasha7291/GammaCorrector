@@ -6,7 +6,6 @@ ApproximatePlotSettingsWidget::ApproximatePlotSettingsWidget(QWidget *parent)
     : QWidget{parent}
     , ui{std::make_unique<ApproximatePlotSettingsWidget_Ui>(this)}
 {
-    setWindowFlag(Qt::Window, true);
     setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, true);
     setWindowFlag(Qt::CustomizeWindowHint, true);
     setWindowFlag(Qt::WindowMinimizeButtonHint, false);
@@ -53,7 +52,6 @@ void ApproximatePlotSettingsWidget::setOffsetPlotData(const QList<double> &keys,
     ui->offsetPlot->setData(0, keys, values, "", true);
     ui->offsetPlot->showMarker();
     ui->offsetPlot->setAxisOrigin(QwtPlot::xBottom, 1.0);
-    // ui->offsetPlot->setAxisOrigin(QwtPlot::yLeft, 1.0);
 }
 
 void ApproximatePlotSettingsWidget::setTemperature(double temperature)

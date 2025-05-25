@@ -63,12 +63,13 @@ void ApproximatePlotWidget::calculateQ()
     const auto gammaDataY = ui->plot->data(Gamma, 256)[1];
     const auto approximatedData = ui->plot->data(Approximated, processor->dataSize());
     auto [qX, qY] = processor->qData(gammaDataY, approximatedData[0], approximatedData[1], ui->settingsWindow->offsetPosition().x());
+    auto originalX = ui->originalData->column(0, { 0 , ui->originalData->rowCount() - 1 });
 
     QList<double> result(4);
     result[0] = ui->settingsWindow->gammaCorrectionOrder();
     result[1] = ui->settingsWindow->temperature();
-    result[3] = std::ranges::max(ui->originalData->column(0, { 0 , ui->originalData->rowCount() - 1 }));
-    result[2] = ui->settingsWindow->offsetPosition().x() / 1023.0 * result[3];
+    result[3] = std::ranges::max(originalX);
+    result[2] = originalX.at(ui->settingsWindow->offsetIndex() / static_cast<double>(processor->dataSize()) * ui->originalData->rowCount());
     result << qY;
 
     for (auto it = qY.begin(); it != qY.end(); ++it)
@@ -98,6 +99,9 @@ void ApproximatePlotWidget::findOffset()
 
 void ApproximatePlotWidget::substractLine()
 {
+    disconnect(ui->plot, &Plot::markerMoved, this, nullptr);
+    disconnect(ui->plot, &Plot::markerMoved, this, nullptr);
+
     if (!dataSubstracted_)
     {
         const auto data = ui->plot->data(Normalized, processor->dataSize());
@@ -110,10 +114,18 @@ void ApproximatePlotWidget::substractLine()
         ui->plot->setAxisOrigin(QwtPlot::xBottom, 1.0);
 
         ui->settingsWindow->setOffsetPlotData(substractedX, substractedY);
-        ui->plot->setMarkerPosition(QPointF{std::ranges::min(substractedX), 1.0});
+        approximateData(ui->settingsWindow->polynomialOrder(), ui->settingsWindow->offsetIndex(), ui->settingsWindow->offsetPosition());
 
         dataSubstracted_ = true;
     }
+
+    connect(ui->plot, &Plot::markerMoved, this, [this](std::size_t offset, const QPointF &pos) -> void {
+        approximateData(ui->settingsWindow->polynomialOrder(), offset, pos);
+    });
+    connect(ui->plot, &Plot::markerMoved, this, [this](std::size_t index, const QPointF &pos) -> void {
+        if (ui->settingsWindow->offsetIndex() != index)
+            ui->settingsWindow->setOffsetPosition(pos);
+    });
 }
 
 void ApproximatePlotWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -127,6 +139,8 @@ void ApproximatePlotWidget::approximateData(std::size_t order, std::size_t offse
     try
     {
         const auto data = ui->plot->data(Normalized, processor->dataSize());
+        if (offset >= data[0].size())
+            offset = 0ull;
         const auto approximatedData = processor->approximatedData(data[0], data[1], order, offset);
 
         coeffs_ = approximatedData[0] + processor->statisticsData(
@@ -134,7 +148,7 @@ void ApproximatePlotWidget::approximateData(std::size_t order, std::size_t offse
             data[1].last(data[1].size() - offset),
             approximatedData[2].last(approximatedData[2].size() - offset)
         );
-        ui->originalData->hideRowTo(offset);
+        ui->originalData->hideRowTo(offset / static_cast<double>(processor->dataSize()) * ui->originalData->rowCount());
         ui->plot->setData(Approximated, approximatedData[1], approximatedData[2], "I_app", true);
         ui->plot->setAxisOrigin(QwtPlot::xBottom, 1.0);
 

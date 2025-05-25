@@ -111,7 +111,7 @@ void MainWindow::loadData()
                         ui->dockWidget->setQ(plotWidget, Q);
                     });
                 }
-                else if (data.size() == 11)
+                else if (data.size() == 12)
                 {
                     QSet gammas(data[0].cbegin(), data[0].cend());
 

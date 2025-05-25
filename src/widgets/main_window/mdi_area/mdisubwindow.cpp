@@ -19,7 +19,8 @@ MdiSubWindow::MdiSubWindow(QMdiArea *parent, QWidget *widget, const QString &nam
     setWindowIcon(QIcon{":/icons/main_icon.png"});
     setWindowFlags(widget->windowFlags());
 
-    parent->addSubWindow(this)->show();
+    widget->show();
+    show();
     parent->setActiveSubWindow(this);
 }
 
@@ -29,6 +30,7 @@ void MdiSubWindow::closeEvent(QCloseEvent *)
 
     if (!autoDelete_)
     {
+        widget()->hide();
         widget()->setParent(previousParent_);
         setWidget(nullptr);
     }

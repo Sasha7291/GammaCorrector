@@ -52,7 +52,7 @@ void ApproximatePlotWidget_Ui::showSettingsWindow() const
 
     if (parentSubWindow->isMaximized())
     {
-        if (settingsSubWindow != nullptr && settingsWindow->isVisible())
+        if (settingsSubWindow != nullptr)
             settingsSubWindow->close();
 
         settingsWindow->setWindowFlag(Qt::Window, true);
@@ -81,8 +81,9 @@ void ApproximatePlotWidget_Ui::showSettingsWindow() const
     parent_->connect(
         parentSubWindow, &QMdiSubWindow::windowStateChanged,
         parent_, [this](Qt::WindowStates oldState, Qt::WindowStates newState) -> void {
-            if (newState & Qt::WindowMaximized && !(oldState & Qt::WindowMaximized)
-                || !(newState & Qt::WindowMaximized) && oldState & Qt::WindowMaximized)
+            if ((newState & Qt::WindowMaximized && !(oldState & Qt::WindowMaximized)
+                    || !(newState & Qt::WindowMaximized) && oldState & Qt::WindowMaximized)
+                && settingsWindow->isVisible())
                 showSettingsWindow();
         }
     );
