@@ -13,6 +13,9 @@ TemperaturePlotSettingsWidget::TemperaturePlotSettingsWidget(QWidget *parent)
     setWindowTitle("Settings");
     
     connect(ui->polynomialOrderComboBox, &PolynomialOrderComboBox::currentOrderChanged, this, &TemperaturePlotSettingsWidget::polynomialOrderChanged);
+    connect(&ui->temperatureButtons, &QButtonGroup::idClicked, ui->temperatureDoubleSpinBox, [this](int index) -> void {
+        ui->temperatureDoubleSpinBox->setScale(static_cast<TemperatureTransformer::Scale>(index));
+    });
 }
 
 TemperaturePlotSettingsWidget::~TemperaturePlotSettingsWidget() {}
