@@ -6,6 +6,12 @@ TemperaturePlotSettingsWidget::TemperaturePlotSettingsWidget(QWidget *parent)
     : QWidget{parent}
     , ui{std::make_unique<TemperaturePlotSettingsWidget_Ui>(this)}
 {
+    setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, true);
+    setWindowFlag(Qt::CustomizeWindowHint, true);
+    setWindowFlag(Qt::WindowMinimizeButtonHint, false);
+    setWindowFlag(Qt::WindowMaximizeButtonHint, false);
+    setWindowTitle("Settings");
+    
     connect(ui->polynomialOrderComboBox, &PolynomialOrderComboBox::currentOrderChanged, this, &TemperaturePlotSettingsWidget::polynomialOrderChanged);
 }
 
